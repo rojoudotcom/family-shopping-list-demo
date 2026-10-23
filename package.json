@@ -6,6 +6,7 @@
   "description": "家族で買うものを書き足し、買ったらチェックを付ける買い物リスト。研修で PRD から Issue・PR・CI までの流れを実演するための、素の HTML/CSS/JS で作った架空のデモアプリ。",
   "scripts": {
     "serve": "node scripts/serve.mjs",
+    "workbench": "node workbench/server.mjs",
     "test": "node --test test/unit/*.test.js",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write ."

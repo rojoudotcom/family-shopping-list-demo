@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>企画のワークベンチ</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>家族の買い物リスト　企画のワークベンチ</h1>
+      <p class="lead">
+        AI が書いた文書は、このリポジトリの <code>docs/</code> にファイルとして残ります。
+      </p>
+    </header>
+
+    <main>
+      <!-- ① 営業・サポート担当者：ヒアリングのアジェンダ -->
+      <section class="card" id="card-agenda">
+        <p class="role">営業・サポート担当者</p>
+        <h2>① ヒアリングのアジェンダを作る</h2>
+        <div class="grid">
+          <label class="field">
+            <span>お客さんの会社情報</span>
+            <select id="agenda-company"></select>
+          </label>
+          <label class="field">
+            <span>担当者情報</span>
+            <select id="agenda-person"></select>
+          </label>
+        </div>
+        <fieldset class="field">
+          <legend>過去の議事録</legend>
+          <div id="agenda-minutes" class="checks"></div>
+        </fieldset>
+        <fieldset class="field">
+          <legend>そのほかの資料（会員の声など）</legend>
+          <div id="agenda-extra" class="checks"></div>
+        </fieldset>
+        <button type="button" id="agenda-run" class="primary">アジェンダを作る</button>
+        <div class="status" id="agenda-status" aria-live="polite"></div>
+        <div class="result" id="agenda-result"></div>
+      </section>
+
+      <!-- ② 営業・サポート担当者：録音から議事録 -->
+      <section class="card" id="card-minutes">
+        <p class="role">営業・サポート担当者</p>
+        <h2>② 録音から議事録を作る</h2>
+        <label class="field">
+          <span>録音</span>
+          <select id="audio-select"></select>
+        </label>
+        <audio id="audio-player" controls preload="metadata"></audio>
+        <div class="buttons">
+          <button type="button" id="transcribe-run" class="primary">文字起こしする</button>
+          <button type="button" id="minutes-run" class="primary" disabled>議事録にする</button>
+        </div>
+        <div class="status" id="minutes-status" aria-live="polite"></div>
+        <div class="result" id="transcript-result"></div>
+        <div class="result" id="minutes-result"></div>
+      </section>
+
+      <!-- ③ 企画担当者：PRD -->
+      <section class="card" id="card-prd">
+        <p class="role">企画担当者</p>
+        <h2>③ PRD を作る</h2>
+        <fieldset class="field">
+          <legend>読ませる資料</legend>
+          <div id="prd-sources" class="source-groups"></div>
+        </fieldset>
+        <label class="field">
+          <span>依頼（任意）</span>
+          <textarea id="prd-request" rows="2">
+家族の端末どうしで同じリストを見る仕組みは、次の段階にします</textarea>
+        </label>
+        <button type="button" id="prd-run" class="primary">PRD を書く</button>
+        <div class="status" id="prd-status" aria-live="polite"></div>
+        <div class="result" id="prd-result"></div>
+        <form id="prd-questions" class="questions" hidden>
+          <h3>決まっていないこと</h3>
+          <div id="prd-question-list"></div>
+          <button type="submit" id="prd-answer" class="primary">答えを PRD に反映する</button>
+        </form>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
