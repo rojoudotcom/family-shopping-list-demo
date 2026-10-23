@@ -15,12 +15,19 @@
 
 ## このリポジトリで実演すること
 
-1. GitHub Copilot と一緒に PRD（製品要求仕様書）を書く（置き場は `docs/prd/`）
-2. PRD を GitHub の Issue に分ける
-3. Issue を Copilot に割り当て、Pull Request（PR）を作らせる
-4. CI（Lint とユニットテスト）の結果を見ながら PR をレビューし、`main` にマージする
+3つの役割が、それぞれの文書を AI と作り、次の役割に渡します。各段階の指示は `.github/prompts/`、文書の形は `docs/templates/` にあります。
 
-`main` にマージすると、`.github/workflows/deploy.yml` が GitHub Pages に公開します。
+| 役割                 | 段階                                                       | 呼び出し                 | 置き場               |
+| -------------------- | ---------------------------------------------------------- | ------------------------ | -------------------- |
+| 営業・サポート担当者 | 利用者の情報と過去の記録から、ヒアリングのアジェンダを作る | `/agenda`                | `docs/hearing/`      |
+|                      | ヒアリングの文字起こしから議事録を作る                     | `/minutes`               | `docs/minutes/`      |
+| 企画担当者           | 議事録と問い合わせの記録から PRD を作る                    | `/prd`                   | `docs/prd/`          |
+| エンジニア           | PRD から要件定義書を作る                                   | `/requirements`          | `docs/requirements/` |
+|                      | 要件定義書から設計書を作る                                 | `/design`                | `docs/design/`       |
+|                      | 要件定義書から Issue を作る                                | `/split`                 | GitHub の Issue      |
+|                      | Issue を Copilot に任せ、PR・CI・レビューを経てマージする  | Issue の担当者に Copilot | `main`               |
+
+`main` にマージすると GitHub Pages に公開され、PR の説明の `Fixes #番号` で Issue が閉じます。
 
 ## ディレクトリ構成
 
