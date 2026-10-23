@@ -1,0 +1,17 @@
+{
+  "name": "family-shopping-list-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "家族で買うものを書き足し、買ったらチェックを付ける買い物リスト。研修で PRD から Issue・PR・CI までの流れを実演するための、素の HTML/CSS/JS で作った架空のデモアプリ。",
+  "scripts": {
+    "serve": "node scripts/serve.mjs",
+    "test": "node --test test/unit/*.test.js",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "eslint": "^9.13.0",
+    "prettier": "^3.3.3"
+  }
+}

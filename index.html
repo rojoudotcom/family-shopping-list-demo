@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>家族の買い物リスト</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app__header">
+        <h1 class="app__title">家族の買い物リスト</h1>
+        <p class="app__subtitle">買うものを書き足して、買ったらチェックを付けます。</p>
+      </header>
+
+      <form id="new-item-form" class="new-item" data-testid="new-item-form" novalidate>
+        <input
+          id="new-item-input"
+          class="new-item__input"
+          type="text"
+          placeholder="品名を入力（例: 牛乳）"
+          autocomplete="off"
+          aria-label="追加する品名"
+          aria-describedby="form-error"
+          data-testid="new-item-input"
+        />
+        <button type="submit" class="new-item__submit" data-testid="add-button">追加</button>
+      </form>
+      <p id="form-error" class="form-error" role="alert" data-testid="form-error"></p>
+
+      <div class="toolbar">
+        <p class="toolbar__count">
+          あと <span id="to-buy-count" data-testid="to-buy-count">0</span> 品
+        </p>
+        <div class="toolbar__filters" role="group" aria-label="表示する品物の絞り込み">
+          <button type="button" data-filter="all" aria-pressed="true" data-testid="filter-all">
+            すべて
+          </button>
+          <button
+            type="button"
+            data-filter="to-buy"
+            aria-pressed="false"
+            data-testid="filter-to-buy"
+          >
+            まだ買っていない
+          </button>
+          <button
+            type="button"
+            data-filter="bought"
+            aria-pressed="false"
+            data-testid="filter-bought"
+          >
+            買った
+          </button>
+        </div>
+      </div>
+
+      <ul id="item-list" class="item-list" aria-label="買い物リスト" data-testid="item-list"></ul>
+      <p id="empty-state" class="empty-state" data-testid="empty-state">リストはまだ空です。</p>
+    </main>
+
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>

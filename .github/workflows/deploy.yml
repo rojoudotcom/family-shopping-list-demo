@@ -1,0 +1,42 @@
+name: Deploy to GitHub Pages
+
+# 継続的デリバリー: main に変更がマージされたら、静的サイトを GitHub Pages へ公開する。
+# ブラウザに必要なファイルだけをアップロードする。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 公式の Pages デプロイ用アクションが必要とする権限。
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# デプロイは同時に1つだけ許可し、実行中のものはキャンセルしない。
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: ビルドしてデプロイ
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: 公開用ファイルをまとめる
+        run: |
+          mkdir -p public
+          cp index.html public/
+          cp -r src public/
+          touch public/.nojekyll
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: public
+      - name: デプロイ
+        id: deployment
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,34 @@
+name: CI
+
+# すべての Pull Request（GitHub Flow の検査ポイント）と、main への push で実行する。
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    # コードを実行せずに、体裁とバグの芽を静的に検査する（eslint + prettier）。
+    name: Lint（コード体裁チェック）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+
+  test:
+    # ロジック（純粋関数）をブラウザなしで単体検証する（node:test）。
+    name: ユニットテスト
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
