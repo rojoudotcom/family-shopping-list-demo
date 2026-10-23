@@ -14,7 +14,8 @@ export const FILTERS = Object.freeze({
 });
 
 /**
- * 品物を1件追加する。品名は前後の空白を除去し、空文字なら拒否する。
+ * 品物を追加する。同じ品名（前後の空白・英字の大小を無視）があれば重複させず、
+ * 買った品物なら未購入に戻す。品名の前後の空白を除去し、空文字なら拒否する。
  * 新しい id は「現在の最大 id + 1」。外部カウンターに頼らず一意性を保てる。
  * @param {Array} items
  * @param {string} name
@@ -24,6 +25,18 @@ export function addItem(items, name) {
   const trimmed = String(name ?? '').trim();
   if (!trimmed) {
     throw new Error('品名を入力してください');
+  }
+  const normalizedName = trimmed.toLowerCase();
+  const existingIndex = items.findIndex(
+    (item) =>
+      String(item.name ?? '')
+        .trim()
+        .toLowerCase() === normalizedName,
+  );
+  if (existingIndex !== -1) {
+    return items[existingIndex].bought
+      ? items.map((item, index) => (index === existingIndex ? { ...item, bought: false } : item))
+      : items;
   }
   const nextId = items.reduce((max, item) => Math.max(max, item.id), 0) + 1;
   return [...items, { id: nextId, name: trimmed, bought: false }];

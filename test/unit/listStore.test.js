@@ -28,6 +28,24 @@ test('addItem: 品名の前後の空白を取り除く', () => {
   assert.equal(result[0].name, 'たまご');
 });
 
+test('addItem: 同じ品名を追加しても行を増やさない', () => {
+  const items = addItem([], '牛乳');
+  const result = addItem(items, '牛乳');
+  assert.deepEqual(result, items);
+});
+
+test('addItem: 前後の空白と英字の大文字・小文字を無視して同じ品名と扱う', () => {
+  const items = addItem([], '  Milk  ');
+  const result = addItem(items, 'mILk');
+  assert.deepEqual(result, [{ id: 1, name: 'Milk', bought: false }]);
+});
+
+test('addItem: 買った品物と一致したら未購入に戻して1件だけ残す', () => {
+  const items = toggleBought(addItem([], '牛乳'), 1);
+  const result = addItem(items, '牛乳');
+  assert.deepEqual(result, [{ id: 1, name: '牛乳', bought: false }]);
+});
+
 test('addItem: 空文字・空白だけの品名は日本語のメッセージで拒否する', () => {
   assert.throws(() => addItem([], ''), { message: '品名を入力してください' });
   assert.throws(() => addItem([], '   '), { message: '品名を入力してください' });
