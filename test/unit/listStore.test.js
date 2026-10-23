@@ -47,11 +47,17 @@ test('addItem: 新しい id は「現在の最大 id + 1」', () => {
   assert.equal(addItem(gapped, 'りんご')[2].id, 6);
 });
 
-test('toggleBought: 指定した id の品物だけ「買った」を反転する', () => {
-  const items = addItem(addItem([], '牛乳'), 'パン');
+test('toggleBought: 買った品物をリストの末尾へ移動する', () => {
+  const items = addItem(addItem(addItem([], '牛乳'), 'パン'), 'りんご');
   const toggled = toggleBought(items, 1);
-  assert.equal(toggled[0].bought, true);
-  assert.equal(toggled[1].bought, false);
+  assert.deepEqual(
+    toggled.map(({ name, bought }) => ({ name, bought })),
+    [
+      { name: 'パン', bought: false },
+      { name: 'りんご', bought: false },
+      { name: '牛乳', bought: true },
+    ],
+  );
 });
 
 test('toggleBought: もう一度呼ぶと元の状態に戻る', () => {

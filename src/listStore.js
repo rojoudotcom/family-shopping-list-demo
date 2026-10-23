@@ -36,7 +36,12 @@ export function addItem(items, name) {
  * @returns {Array}
  */
 export function toggleBought(items, id) {
-  return items.map((item) => (item.id === id ? { ...item, bought: !item.bought } : item));
+  const toggled = items.map((item) => (item.id === id ? { ...item, bought: !item.bought } : item));
+  const index = toggled.findIndex((item) => item.id === id);
+  if (index === -1 || !toggled[index].bought) {
+    return toggled;
+  }
+  return [...toggled.slice(0, index), ...toggled.slice(index + 1), toggled[index]];
 }
 
 /**
