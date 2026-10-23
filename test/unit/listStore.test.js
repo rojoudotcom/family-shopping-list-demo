@@ -28,6 +28,45 @@ test('addItem: 品名の前後の空白を取り除く', () => {
   assert.equal(result[0].name, 'たまご');
 });
 
+test('addItem: 英字の大文字小文字が異なる重複品目は追加しない', () => {
+  const items = addItem([], 'milk');
+  const result = addItem(items, 'Milk');
+
+  assert.equal(result.length, 1);
+  assert.equal(result[0].name, 'milk');
+});
+
+test('addItem: 品名の末尾に空白がある重複品目は追加しない', () => {
+  const items = addItem([], '牛乳');
+  assert.equal(addItem(items, '牛乳 ').length, 1);
+});
+
+test('addItem: 品名の先頭に空白がある重複品目は追加しない', () => {
+  const items = addItem([], '牛乳');
+  assert.equal(addItem(items, ' 牛乳').length, 1);
+});
+
+test('addItem: 購入済みの重複品目を未購入に戻す', () => {
+  const items = toggleBought(addItem([], '卵'), 1);
+  const result = addItem(items, '卵');
+
+  assert.equal(result.length, 1);
+  assert.equal(result[0].bought, false);
+});
+
+test('addItem: 未購入の重複品目は追加しない', () => {
+  const items = addItem([], '牛乳');
+  assert.equal(addItem(items, '牛乳').length, 1);
+});
+
+test('addItem: 異なる品目は追加する', () => {
+  const items = addItem([], '牛乳');
+  const result = addItem(items, '卵');
+
+  assert.equal(result.length, 2);
+  assert.equal(result[1].name, '卵');
+});
+
 test('addItem: 空文字・空白だけの品名は日本語のメッセージで拒否する', () => {
   assert.throws(() => addItem([], ''), { message: '品名を入力してください' });
   assert.throws(() => addItem([], '   '), { message: '品名を入力してください' });
