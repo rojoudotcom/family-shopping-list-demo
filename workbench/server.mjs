@@ -1,6 +1,6 @@
 // 企画のワークベンチ：ブラウザから AI に文書を書かせる小さな画面。画面は2つある。
-// - 顧客管理（CRM）：営業・サポート担当者が、ヒアリングのアジェンダ・議事録を作り、エンドユーザの声を登録する
-// - 文書ツール：企画担当者が、議事録やエンドユーザの声から PRD を作る
+// - 顧客管理（CRM）：営業・サポート担当者が、ヒアリングのアジェンダ・議事録を作り、お客さんの声を登録する
+// - 文書ツール：企画担当者が、議事録やお客さんの声から PRD を作る
 // 依存パッケージゼロ（Node 標準ライブラリだけ）。データベースは使わず、結果はリポジトリ内のファイルに残る。
 // 起動：`npm run workbench` → http://127.0.0.1:4174
 //
@@ -42,8 +42,8 @@ const COPILOT_TIMEOUT_MS = 180_000;
 // 文字起こしは擬似。用意した文字起こしを、待ち時間を見せてから返す。
 const TRANSCRIBE_DELAY_MS = 3_000;
 const MAX_JSON_BYTES = 1024 * 1024;
-// 顧客管理の本体。エンドユーザの声の記録を、配列の JSON で持つ。書き込むのはこのサーバだけ。
-const CRM_FILE = 'docs/crm/エンドユーザの声.json';
+// 顧客管理の本体。お客さんの声の記録を、配列の JSON で持つ。書き込むのはこのサーバだけ。
+const CRM_FILE = 'docs/crm/お客さんの声.json';
 
 // Copilot に許さない操作。push・commit・GitHub への書き込みは人がやる。
 const DENY_FLAGS = [
@@ -239,7 +239,7 @@ async function handleAgenda(body) {
   );
   const input = [
     '次のファイルを読んで、次のヒアリングのアジェンダを作ってください。',
-    ...bullet('エンドユーザの情報', user),
+    ...bullet('お客さんの情報', user),
     ...bullet('これまでの問い合わせ', inquiries),
     ...bullet('過去の議事録', minutes),
     `保存先：${savePath}（このファイル名で新しく保存してください）`,
@@ -277,7 +277,7 @@ async function readCrm() {
   }
 }
 
-// 文字起こしから、エンドユーザの声を1件、顧客管理に登録する。
+// 文字起こしから、お客さんの声を1件、顧客管理に登録する。
 // AI には登録待ちの JSON を書かせ、このサーバが形と「そのままの言葉」を確かめてから本体に足す。
 async function handleCrm(body) {
   const transcript = await checkPath(body.transcript, ['docs/hearing']);

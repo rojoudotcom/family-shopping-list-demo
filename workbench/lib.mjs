@@ -200,7 +200,7 @@ export function cleanReply(text) {
     .trim();
 }
 
-// ---- 顧客管理（CRM）：エンドユーザの声の記録 ----
+// ---- 顧客管理（CRM）：お客さんの声の記録 ----
 
 // 1件の記録が持つ項目と、決まった言葉から選ぶ項目の選択肢（.github/prompts/crm.prompt.md と同じ）。
 export const VOICE_CHANNELS = ['ヒアリング', '電話', 'メール', 'アプリ内の問い合わせフォーム'];
@@ -212,7 +212,7 @@ export const VOICE_CATEGORIES = [
   'そのほか',
 ];
 export const VOICE_STATUSES = ['回答済み', '開発チームへ共有', '要望として記録', '対応中'];
-const VOICE_TEXT_FIELDS = ['エンドユーザ', '困りごと', '要望'];
+const VOICE_TEXT_FIELDS = ['お客さん', '困りごと', '要望'];
 
 // 比べるときに、空白・改行・かぎ括弧の違いは見ない。
 const squash = (text) => String(text).replace(/[\s「」『』]/g, '');
@@ -262,7 +262,7 @@ export function appendVoiceRecord(records, record, source) {
   const entry = {
     番号: next,
     日付: record.日付,
-    エンドユーザ: record.エンドユーザ.trim(),
+    お客さん: record.お客さん.trim(),
     経路: record.経路,
     分類: record.分類,
     困りごと: record.困りごと.trim(),

@@ -255,7 +255,7 @@ test('parseChecklistQuestions: 番号つきの行「1. 質問（選択肢：…�
   assert.equal(questions[1].options[1].label, '「自動」でまとめる（次に開いたとき）');
 });
 
-// ---- 顧客管理（CRM）：エンドユーザの声の記録 ----
+// ---- 顧客管理（CRM）：お客さんの声の記録 ----
 
 const transcript = [
   'Bさん：卵は先週買って、チェックを付けたままでした。今週また足したら、新しい行が増えていました。',
@@ -264,7 +264,7 @@ const transcript = [
 
 const goodRecord = () => ({
   日付: '2026-10-19',
-  エンドユーザ: 'Aさん（夫）・Bさん（妻）',
+  お客さん: 'Aさん（夫）・Bさん（妻）',
   経路: 'ヒアリング',
   分類: '同じ品が2行になる',
   困りごと: 'チェック済みの卵を足すと、行が増える。',
@@ -313,8 +313,8 @@ test('parseJsonLoose: ```json の囲みがあっても読む', () => {
   assert.throws(() => parseJsonLoose('読めない'));
 });
 
-test('docs/crm/エンドユーザの声.json: 最初から入れた記録が、問い合わせ記録の言葉どおりで検査を通る', () => {
-  const records = JSON.parse(readFileSync('docs/crm/エンドユーザの声.json', 'utf8'));
+test('docs/crm/お客さんの声.json: 最初から入れた記録が、問い合わせ記録の言葉どおりで検査を通る', () => {
+  const records = JSON.parse(readFileSync('docs/crm/お客さんの声.json', 'utf8'));
   const inquiries = readFileSync('docs/customer/問い合わせ記録.md', 'utf8');
   assert.ok(records.length >= 5);
   for (const record of records.filter((r) => r.登録元.startsWith('docs/customer/'))) {

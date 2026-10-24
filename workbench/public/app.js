@@ -178,11 +178,11 @@ const checkedValues = (container) =>
 const SCREENS = {
   crm: {
     title: '顧客管理（CRM）　営業・サポート担当者の画面',
-    lead: 'エンドユーザの問い合わせとヒアリングを記録し、エンドユーザの声として登録します。',
+    lead: 'お客さんの問い合わせとヒアリングを記録し、お客さんの声として登録します。',
   },
   docs: {
     title: '文書ツール　企画担当者の画面',
-    lead: '議事録と、顧客管理に登録されたエンドユーザの声から、PRD を書きます。',
+    lead: '議事録と、顧客管理に登録されたお客さんの声から、PRD を書きます。',
   },
 };
 
@@ -203,9 +203,9 @@ window.addEventListener('hashchange', showScreen);
 // ---- ファイルの一覧 ----
 
 const CRM_SOURCE = {
-  path: 'docs/crm/エンドユーザの声.json',
-  name: 'エンドユーザの声.json',
-  label: '顧客管理のエンドユーザの声',
+  path: 'docs/crm/お客さんの声.json',
+  name: 'お客さんの声.json',
+  label: '顧客管理のお客さんの声',
 };
 
 let files = { customer: [], minutes: [], hearing: [], prd: [], audio: [] };
@@ -286,14 +286,14 @@ function updatePlayer() {
 function fillPrdSources() {
   const groups = [
     { title: '議事録', items: files.minutes, checked: true },
-    { title: '顧客管理のエンドユーザの声', items: [CRM_SOURCE], checked: true },
+    { title: '顧客管理のお客さんの声', items: [CRM_SOURCE], checked: true },
     { title: '文字起こし', items: files.hearing.filter(isTranscript), checked: false },
     {
       title: 'いまのアプリの機能',
       items: [{ path: 'README.md', name: 'README.md', label: 'アプリの説明（README.md）' }],
       checked: true,
     },
-    { title: 'エンドユーザの情報・問い合わせ', items: files.customer, checked: false },
+    { title: 'お客さんの情報・問い合わせ', items: files.customer, checked: false },
   ];
   const root = $('prd-sources');
   for (const group of groups) {
@@ -331,7 +331,7 @@ function showRecords(data, highlightNo) {
   $('crm-rows').innerHTML = data.records
     .map(
       (r) => `<tr${r.番号 === highlightNo ? ' class="new"' : ''}>
-        ${cell(r.番号)}${cell(r.日付)}${cell(r.エンドユーザ)}${cell(r.経路)}${cell(r.分類)}
+        ${cell(r.番号)}${cell(r.日付)}${cell(r.お客さん)}${cell(r.経路)}${cell(r.分類)}
         ${cell(r.困りごと)}${cell(r.要望)}
         <td>${(r.そのままの言葉 || []).map((q) => `<q>${escapeHtml(q)}</q>`).join('<br />')}</td>
         ${cell(r.対応の状況)}</tr>`,
