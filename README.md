@@ -24,7 +24,7 @@
 | 企画担当者           | 議事録と問い合わせの記録から PRD を作る                    | `/prd`                   | `docs/prd/`          |
 | エンジニア           | PRD から要件定義書を作る                                   | `/requirements`          | `docs/requirements/` |
 |                      | 要件定義書から設計書を作る                                 | `/design`                | `docs/design/`       |
-|                      | 要件定義書から Issue を作る                                | `/split`                 | GitHub の Issue      |
+|                      | 要件定義書から Issue を作る                                | `/issues`                | GitHub の Issue      |
 |                      | Issue を Copilot に任せ、PR・CI・レビューを経てマージする  | Issue の担当者に Copilot | `main`               |
 
 `main` にマージすると GitHub Pages に公開され、PR の説明の `Fixes #番号` で Issue が閉じます。
