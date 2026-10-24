@@ -6,8 +6,10 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import {
+  appendVoiceRecord,
   buildAnswerText,
   cleanReply,
   diffSnapshots,
@@ -15,10 +17,12 @@ import {
   nextFreePath,
   normalizeRepoPath,
   parseChecklistQuestions,
+  parseJsonLoose,
   parseQuestions,
   parseResumeId,
   redactSecrets,
   stripFrontmatter,
+  validateVoiceRecord,
 } from '../../workbench/lib.mjs';
 
 test('stripFrontmatter: 先頭の --- で囲まれた設定部分を取り除く', () => {
@@ -197,8 +201,8 @@ test('redactSecrets: トークンらしき文字列を伏せる', () => {
 
 test('cleanReply: 作業の記録の行と利用量の欄を除き、人に向けた文だけ残す', () => {
   const stdout = [
-    '● Read 会員の声.md',
-    '  │ docs/voice/会員の声.md',
+    '● Read 問い合わせ記録.md',
+    '  │ docs/customer/問い合わせ記録.md',
     '  └ 15 lines read',
     '',
     'PRD を保存しました。',
@@ -249,4 +253,71 @@ test('parseChecklistQuestions: 番号つきの行「1. 質問（選択肢：…�
     ],
   );
   assert.equal(questions[1].options[1].label, '「自動」でまとめる（次に開いたとき）');
+});
+
+// ---- 顧客管理（CRM）：エンドユーザの声の記録 ----
+
+const transcript = [
+  'Bさん：卵は先週買って、チェックを付けたままでした。今週また足したら、新しい行が増えていました。',
+  'Aさん：私も賛成です。2行あると、どちらを信じればいいのか分からなくなるので。',
+].join('\n');
+
+const goodRecord = () => ({
+  日付: '2026-10-19',
+  エンドユーザ: 'Aさん（夫）・Bさん（妻）',
+  経路: 'ヒアリング',
+  分類: '同じ品が2行になる',
+  困りごと: 'チェック済みの卵を足すと、行が増える。',
+  要望: '前からある行を、まだ買っていない状態に戻してほしい。',
+  そのままの言葉: ['今週また足したら、新しい行が増えていました。'],
+  対応の状況: '開発チームへ共有',
+});
+
+test('validateVoiceRecord: 形がそろい、言葉が文字起こしにある記録は通す', () => {
+  assert.deepEqual(validateVoiceRecord(goodRecord(), transcript), []);
+});
+
+test('validateVoiceRecord: 文字起こしに無い「そのままの言葉」は拒む（空白とかぎ括弧の違いは見ない）', () => {
+  const spaced = {
+    ...goodRecord(),
+    そのままの言葉: ['「今週また足したら、 新しい行が増えていました。」'],
+  };
+  assert.deepEqual(validateVoiceRecord(spaced, transcript), []);
+  const invented = { ...goodRecord(), そのままの言葉: ['卵が2つになって困りました。'] };
+  assert.equal(validateVoiceRecord(invented, transcript).length, 1);
+  assert.match(validateVoiceRecord(invented, transcript)[0], /文字起こしに無い言葉/);
+});
+
+test('validateVoiceRecord: 日付の形・決まった言葉・空の項目・配列を拒む', () => {
+  const bad = { ...goodRecord(), 日付: '10月19日', 分類: '重複', 要望: '', 対応の状況: '済み' };
+  const errors = validateVoiceRecord(bad, transcript);
+  assert.equal(errors.length, 4);
+  assert.deepEqual(validateVoiceRecord([goodRecord()]), [
+    '記録が1件の形（項目の集まり）になっていません。',
+  ]);
+  assert.equal(validateVoiceRecord({ ...goodRecord(), そのままの言葉: [] }).length, 1);
+});
+
+test('appendVoiceRecord: 番号は最大＋1、登録元を付けて末尾に足し、元の配列は変えない', () => {
+  const records = Object.freeze([{ 番号: 1 }, { 番号: 5 }]);
+  const updated = appendVoiceRecord(records, goodRecord(), 'docs/hearing/x_文字起こし.txt');
+  assert.equal(updated.length, 3);
+  assert.equal(updated[2].番号, 6);
+  assert.equal(updated[2].登録元, 'docs/hearing/x_文字起こし.txt');
+  assert.equal(records.length, 2);
+});
+
+test('parseJsonLoose: ```json の囲みがあっても読む', () => {
+  assert.deepEqual(parseJsonLoose('```json\n{"a": 1}\n```'), { a: 1 });
+  assert.deepEqual(parseJsonLoose('{"a": 1}'), { a: 1 });
+  assert.throws(() => parseJsonLoose('読めない'));
+});
+
+test('docs/crm/エンドユーザの声.json: 最初から入れた記録が、問い合わせ記録の言葉どおりで検査を通る', () => {
+  const records = JSON.parse(readFileSync('docs/crm/エンドユーザの声.json', 'utf8'));
+  const inquiries = readFileSync('docs/customer/問い合わせ記録.md', 'utf8');
+  assert.ok(records.length >= 5);
+  for (const record of records.filter((r) => r.登録元.startsWith('docs/customer/'))) {
+    assert.deepEqual(validateVoiceRecord(record, inquiries), [], `番号 ${record.番号}`);
+  }
 });

@@ -40,6 +40,48 @@ code {
   padding: 20px 32px 8px;
 }
 
+.app-name {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.tab {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 8px 20px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.tab small {
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.tab.active small {
+  color: #dbe9f8;
+}
+
 .site-header h1 {
   margin: 0;
   font-size: 30px;
@@ -198,6 +240,13 @@ button:disabled {
   font-size: 20px;
 }
 
+.status.done {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--ok-soft);
+  font-weight: 600;
+}
+
 .status.error {
   padding: 10px 14px;
   border-radius: 8px;
@@ -335,4 +384,60 @@ button:disabled {
 
 .reason {
   margin-top: 6px;
+}
+
+.hint {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+.table-title {
+  margin: 20px 0 4px;
+  font-size: 20px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.records {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.records th,
+.records td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.records th {
+  background: #eef1f4;
+  white-space: nowrap;
+}
+
+.records td:first-child,
+.records td:nth-child(2) {
+  white-space: nowrap;
+}
+
+.records tr.new td {
+  background: #fff6d6;
+}
+
+.records q {
+  quotes: '「' '」';
+}
+
+/* 経路・分類・対応の状況は、1文字ずつ折り返さない幅にする。 */
+.records td:nth-child(4),
+.records td:nth-child(5),
+.records td:nth-child(9) {
+  min-width: 7.5em;
 }

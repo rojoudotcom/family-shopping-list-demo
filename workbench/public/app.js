@@ -112,8 +112,13 @@ async function withBusy(buttons, statusEl, message, task) {
   buttons.forEach((b) => (b.disabled = true));
   const stop = startWaiting(statusEl, message);
   try {
-    await task();
+    // task が文を返したら、終わったことの知らせとして出す。
+    const done = await task();
     stop();
+    if (done) {
+      statusEl.className = 'status done';
+      statusEl.textContent = done;
+    }
   } catch (error) {
     stop();
     showError(statusEl, error);
@@ -122,7 +127,7 @@ async function withBusy(buttons, statusEl, message, task) {
   }
 }
 
-function fillSelect(select, files, emptyLabel) {
+function fillSelect(select, files, emptyLabel, labelOf = (f) => f.name) {
   const current = select.value;
   select.innerHTML = '';
   const none = document.createElement('option');
@@ -132,7 +137,7 @@ function fillSelect(select, files, emptyLabel) {
   for (const file of files) {
     const option = document.createElement('option');
     option.value = file.path;
-    option.textContent = file.name;
+    option.textContent = labelOf(file);
     select.append(option);
   }
   if (files.some((f) => f.path === current)) select.value = current;
@@ -168,9 +173,44 @@ function fillChecks(
 const checkedValues = (container) =>
   [...container.querySelectorAll('input:checked')].map((input) => input.value);
 
+// ---- 画面の切り替え（顧客管理／文書ツール） ----
+
+const SCREENS = {
+  crm: {
+    title: '顧客管理（CRM）　営業・サポート担当者の画面',
+    lead: 'エンドユーザの問い合わせとヒアリングを記録し、エンドユーザの声として登録します。',
+  },
+  docs: {
+    title: '文書ツール　企画担当者の画面',
+    lead: '議事録と、顧客管理に登録されたエンドユーザの声から、PRD を書きます。',
+  },
+};
+
+function showScreen() {
+  const name = window.location.hash === '#docs' ? 'docs' : 'crm';
+  for (const key of Object.keys(SCREENS)) {
+    $(`screen-${key}`).hidden = key !== name;
+    $(`tab-${key}`).classList.toggle('active', key === name);
+    if (key === name) $(`tab-${key}`).setAttribute('aria-current', 'page');
+    else $(`tab-${key}`).removeAttribute('aria-current');
+  }
+  $('screen-title').textContent = SCREENS[name].title;
+  $('screen-lead').textContent = SCREENS[name].lead;
+}
+
+window.addEventListener('hashchange', showScreen);
+
 // ---- ファイルの一覧 ----
 
-let files = { customer: [], minutes: [], voice: [], hearing: [], prd: [], audio: [] };
+const CRM_SOURCE = {
+  path: 'docs/crm/エンドユーザの声.json',
+  name: 'エンドユーザの声.json',
+  label: '顧客管理のエンドユーザの声',
+};
+
+let files = { customer: [], minutes: [], hearing: [], prd: [], audio: [] };
+
+const isTranscript = (f) => /_(文字起こし|台本)\.(txt|md)$/.test(f.name);
 
 async function loadFiles() {
   try {
@@ -179,18 +219,40 @@ async function loadFiles() {
   } catch {
     // サーバが止まっていても画面は出す。
   }
-  const firstLoad = !$('agenda-company').options.length;
-  fillSelect($('agenda-company'), files.customer, '（まだありません）');
-  fillSelect($('agenda-person'), [...files.customer, ...files.voice], '（まだありません）');
-  // 最初に開いたときは、名前から会社情報・担当者情報らしいファイルを選んでおく。
+  const firstLoad = !$('agenda-user').options.length;
+  const inquiryChoices = [CRM_SOURCE, ...files.customer];
+  fillSelect($('agenda-user'), files.customer, '（まだありません）');
+  fillSelect($('agenda-inquiries'), inquiryChoices, '（まだありません）', (f) => f.label || f.name);
+  // 最初に開いたときは、名前からそれらしいファイルを選んでおく。
   if (firstLoad) {
-    $('agenda-company').value = files.customer.find((f) => f.name.includes('会社'))?.path || '';
-    $('agenda-person').value = files.customer.find((f) => f.name.includes('担当'))?.path || '';
+    $('agenda-user').value =
+      files.customer.find((f) => f.name.includes('プロフィール'))?.path || '';
+    $('agenda-inquiries').value =
+      files.customer.find((f) => f.name.includes('問い合わせ'))?.path || CRM_SOURCE.path;
   }
   fillChecks($('agenda-minutes'), files.minutes, { name: 'minutes', checkedByDefault: true });
-  fillChecks($('agenda-extra'), files.voice, { name: 'extra', checkedByDefault: true });
   fillAudio();
+  for (const select of document.querySelectorAll('.transcript-select')) {
+    fillTranscripts(select);
+  }
   fillPrdSources();
+}
+
+function fillTranscripts(select) {
+  const current = select.value;
+  const items = files.hearing.filter(isTranscript);
+  select.innerHTML = '';
+  if (items.length === 0) {
+    select.innerHTML = '<option value="">（まだありません。② で文字起こししてください）</option>';
+    return;
+  }
+  for (const file of items) {
+    const option = document.createElement('option');
+    option.value = file.path;
+    option.textContent = file.name;
+    select.append(option);
+  }
+  if (items.some((f) => f.path === current)) select.value = current;
 }
 
 function fillAudio() {
@@ -206,16 +268,7 @@ function fillAudio() {
     option.textContent = file.name;
     select.append(option);
   }
-  if (files.audio.some((f) => f.path === current)) {
-    select.value = current;
-  } else {
-    // 用意した文字起こし（docs/hearing/<名前>_文字起こし.txt）がある録音を先に選んでおく。
-    const stem = (name) => name.replace(/\.[^.]+$/, '');
-    const ready = files.audio.find((a) =>
-      files.hearing.some((h) => h.name === `${stem(a.name)}_文字起こし.txt`),
-    );
-    if (ready) select.value = ready.path;
-  }
+  if (files.audio.some((f) => f.path === current)) select.value = current;
   updatePlayer();
 }
 
@@ -229,22 +282,18 @@ function updatePlayer() {
   }
 }
 
-// PRD に読ませる資料のまとまり。文字起こしは docs/hearing/ のうちアジェンダ以外。
+// PRD に読ませる資料のまとまり。
 function fillPrdSources() {
   const groups = [
     { title: '議事録', items: files.minutes, checked: true },
-    {
-      title: '文字起こし',
-      items: files.hearing.filter((f) => !f.name.includes('アジェンダ')),
-      checked: false,
-    },
-    { title: '会員の声・問い合わせ', items: files.voice, checked: true },
+    { title: '顧客管理のエンドユーザの声', items: [CRM_SOURCE], checked: true },
+    { title: '文字起こし', items: files.hearing.filter(isTranscript), checked: false },
     {
       title: 'いまのアプリの機能',
       items: [{ path: 'README.md', name: 'README.md', label: 'アプリの説明（README.md）' }],
       checked: true,
     },
-    { title: '会社情報', items: files.customer, checked: false },
+    { title: 'エンドユーザの情報・問い合わせ', items: files.customer, checked: false },
   ];
   const root = $('prd-sources');
   for (const group of groups) {
@@ -263,6 +312,33 @@ function fillPrdSources() {
   }
 }
 
+// ---- 顧客管理の一覧 ----
+
+async function loadCrm(highlightNo) {
+  let data = { path: CRM_SOURCE.path, records: [] };
+  try {
+    data = await (await fetch('/api/crm')).json();
+  } catch {
+    // 読めなければ空の表を出す。
+  }
+  showRecords(data, highlightNo);
+}
+
+function showRecords(data, highlightNo) {
+  $('crm-path').innerHTML =
+    `ファイル：<code>${escapeHtml(data.path)}</code>（${data.records.length}件）`;
+  const cell = (text) => `<td>${escapeHtml(text ?? '')}</td>`;
+  $('crm-rows').innerHTML = data.records
+    .map(
+      (r) => `<tr${r.番号 === highlightNo ? ' class="new"' : ''}>
+        ${cell(r.番号)}${cell(r.日付)}${cell(r.エンドユーザ)}${cell(r.経路)}${cell(r.分類)}
+        ${cell(r.困りごと)}${cell(r.要望)}
+        <td>${(r.そのままの言葉 || []).map((q) => `<q>${escapeHtml(q)}</q>`).join('<br />')}</td>
+        ${cell(r.対応の状況)}</tr>`,
+    )
+    .join('');
+}
+
 // ---- ① アジェンダ ----
 
 $('agenda-run').addEventListener('click', () => {
@@ -270,10 +346,9 @@ $('agenda-run').addEventListener('click', () => {
   withBusy([button], $('agenda-status'), 'AI が書いています…（30秒ほど）', async () => {
     $('agenda-result').innerHTML = '';
     const data = await post('/api/agenda', {
-      company: $('agenda-company').value || [],
-      person: $('agenda-person').value || [],
+      user: $('agenda-user').value || [],
+      inquiries: $('agenda-inquiries').value || [],
       minutes: checkedValues($('agenda-minutes')),
-      extra: checkedValues($('agenda-extra')),
     });
     const file = data.files[0];
     if (!file)
@@ -283,39 +358,37 @@ $('agenda-run').addEventListener('click', () => {
   });
 });
 
-// ---- ② 文字起こしと議事録 ----
+// ---- ② 文字起こし ----
 
-let transcriptPath = '';
-
-$('audio-select').addEventListener('change', () => {
-  updatePlayer();
-  transcriptPath = '';
-  $('minutes-run').disabled = true;
-});
+$('audio-select').addEventListener('change', updatePlayer);
 
 $('transcribe-run').addEventListener('click', () => {
   const path = $('audio-select').value;
   if (!path) {
-    showError($('minutes-status'), new Error('録音を選んでください。'));
+    showError($('transcribe-status'), new Error('録音を選んでください。'));
     return;
   }
-  const buttons = [$('transcribe-run'), $('minutes-run')];
-  withBusy(buttons, $('minutes-status'), '文字起こししています…', async () => {
+  withBusy([$('transcribe-run')], $('transcribe-status'), '文字起こししています…', async () => {
     $('transcript-result').innerHTML = '';
-    $('minutes-result').innerHTML = '';
     const data = await post('/api/transcribe', { path });
-    transcriptPath = data.path;
     showText($('transcript-result'), data);
-  }).then(() => {
-    $('minutes-run').disabled = !transcriptPath;
+    await loadFiles();
+    // ③ と ④ で、いま文字起こしした録音を選んでおく。
+    for (const select of document.querySelectorAll('.transcript-select')) select.value = data.path;
   });
 });
 
+// ---- ③ 議事録 ----
+
 $('minutes-run').addEventListener('click', () => {
-  const buttons = [$('transcribe-run'), $('minutes-run')];
-  withBusy(buttons, $('minutes-status'), 'AI が書いています…（30秒ほど）', async () => {
+  const transcript = $('minutes-transcript').value;
+  if (!transcript) {
+    showError($('minutes-status'), new Error('文字起こしを選んでください。'));
+    return;
+  }
+  withBusy([$('minutes-run')], $('minutes-status'), 'AI が書いています…（30秒ほど）', async () => {
     $('minutes-result').innerHTML = '';
-    const data = await post('/api/minutes', { transcript: transcriptPath });
+    const data = await post('/api/minutes', { transcript });
     const file = data.files[0];
     if (!file) throw new Error('AI は返事をしましたが、議事録のファイルが見つかりませんでした。');
     showDocument($('minutes-result'), file);
@@ -323,6 +396,21 @@ $('minutes-run').addEventListener('click', () => {
     // 新しい議事録を PRD の資料に入れておく。
     const box = document.querySelector(`#prd-sources input[value="${CSS.escape(file.path)}"]`);
     if (box) box.checked = true;
+  });
+});
+
+// ---- ④ 顧客管理に登録 ----
+
+$('crm-run').addEventListener('click', () => {
+  const transcript = $('crm-transcript').value;
+  if (!transcript) {
+    showError($('crm-status'), new Error('文字起こしを選んでください。'));
+    return;
+  }
+  withBusy([$('crm-run')], $('crm-status'), 'AI が記録にまとめています…（30秒ほど）', async () => {
+    const data = await post('/api/crm', { transcript });
+    showRecords(data, data.record.番号);
+    return `${data.record.番号}件目として登録しました（表の色付きの行）。`;
   });
 });
 
@@ -422,4 +510,6 @@ $('prd-questions').addEventListener('submit', (event) => {
   );
 });
 
+showScreen();
 loadFiles();
+loadCrm();

@@ -8,9 +8,9 @@ import { posix } from 'node:path';
 export const ALLOWED_DIRS = [
   'docs/customer',
   'docs/minutes',
-  'docs/voice',
   'docs/hearing',
   'docs/prd',
+  'docs/crm',
   'audio',
 ];
 
@@ -198,4 +198,87 @@ export function cleanReply(text) {
     .join('\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+}
+
+// ---- 顧客管理（CRM）：エンドユーザの声の記録 ----
+
+// 1件の記録が持つ項目と、決まった言葉から選ぶ項目の選択肢（.github/prompts/crm.prompt.md と同じ）。
+export const VOICE_CHANNELS = ['ヒアリング', '電話', 'メール', 'アプリ内の問い合わせフォーム'];
+export const VOICE_CATEGORIES = [
+  '同じ品が2行になる',
+  '買った品の見せ方',
+  '家族での共有',
+  '文字の見やすさ',
+  'そのほか',
+];
+export const VOICE_STATUSES = ['回答済み', '開発チームへ共有', '要望として記録', '対応中'];
+const VOICE_TEXT_FIELDS = ['エンドユーザ', '困りごと', '要望'];
+
+// 比べるときに、空白・改行・かぎ括弧の違いは見ない。
+const squash = (text) => String(text).replace(/[\s「」『』]/g, '');
+
+// AI が書いた記録を検査する。問題があれば、画面に出せる日本語の文の配列を返す（無ければ空）。
+// transcript を渡すと、「そのままの言葉」が文字起こしに言葉どおりにあるかも確かめる。
+export function validateVoiceRecord(record, transcript) {
+  if (!record || typeof record !== 'object' || Array.isArray(record)) {
+    return ['記録が1件の形（項目の集まり）になっていません。'];
+  }
+  const errors = [];
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(record.日付 ?? ''))) {
+    errors.push('「日付」が 2026-10-19 の形になっていません。');
+  }
+  for (const field of VOICE_TEXT_FIELDS) {
+    if (typeof record[field] !== 'string' || record[field].trim() === '') {
+      errors.push(`「${field}」が空です。`);
+    }
+  }
+  const choices = [
+    ['経路', VOICE_CHANNELS],
+    ['分類', VOICE_CATEGORIES],
+    ['対応の状況', VOICE_STATUSES],
+  ];
+  for (const [field, allowed] of choices) {
+    if (!allowed.includes(record[field])) {
+      errors.push(`「${field}」が決まった言葉（${allowed.join('／')}）のどれでもありません。`);
+    }
+  }
+  const quotes = record.そのままの言葉;
+  if (!Array.isArray(quotes) || quotes.length === 0 || quotes.some((q) => typeof q !== 'string')) {
+    errors.push('「そのままの言葉」が1つもありません。');
+  } else if (transcript !== undefined) {
+    const source = squash(transcript);
+    for (const quote of quotes) {
+      if (!squash(quote) || !source.includes(squash(quote))) {
+        errors.push(`文字起こしに無い言葉が「そのままの言葉」に入っています：${quote}`);
+      }
+    }
+  }
+  return errors;
+}
+
+// 検査を通った記録に、番号と登録元を付けて、一覧の末尾に足した新しい配列を返す。
+export function appendVoiceRecord(records, record, source) {
+  const next = records.reduce((max, r) => Math.max(max, Number(r.番号) || 0), 0) + 1;
+  const entry = {
+    番号: next,
+    日付: record.日付,
+    エンドユーザ: record.エンドユーザ.trim(),
+    経路: record.経路,
+    分類: record.分類,
+    困りごと: record.困りごと.trim(),
+    要望: record.要望.trim(),
+    そのままの言葉: record.そのままの言葉.map((q) => q.trim()),
+    対応の状況: record.対応の状況,
+    登録元: source,
+  };
+  return [...records, entry];
+}
+
+// AI が JSON の前後に ```json の囲みを付けてしまったときのために、それを外してから読む。
+export function parseJsonLoose(text) {
+  const body = String(text)
+    .trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/, '');
+  return JSON.parse(body);
 }

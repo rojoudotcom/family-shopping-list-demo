@@ -76,6 +76,7 @@ export default [
       sourceType: 'module',
       globals: {
         document: 'readonly',
+        window: 'readonly',
         fetch: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',

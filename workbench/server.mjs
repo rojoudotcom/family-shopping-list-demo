@@ -1,4 +1,6 @@
-// 企画のワークベンチ：営業・サポート担当者と企画担当者が、ブラウザから AI に文書を書かせる小さな画面。
+// 企画のワークベンチ：ブラウザから AI に文書を書かせる小さな画面。画面は2つある。
+// - 顧客管理（CRM）：営業・サポート担当者が、ヒアリングのアジェンダ・議事録を作り、エンドユーザの声を登録する
+// - 文書ツール：企画担当者が、議事録やエンドユーザの声から PRD を作る
 // 依存パッケージゼロ（Node 標準ライブラリだけ）。データベースは使わず、結果はリポジトリ内のファイルに残る。
 // 起動：`npm run workbench` → http://127.0.0.1:4174
 //
@@ -7,24 +9,27 @@
 
 import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
-import { readFile, readdir, stat, access } from 'node:fs/promises';
+import { readFile, readdir, stat, access, writeFile, unlink } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { basename, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
   ALLOWED_DIRS,
+  appendVoiceRecord,
   buildAnswerText,
   diffSnapshots,
   formatDate,
   nextFreePath,
   normalizeRepoPath,
   parseChecklistQuestions,
+  parseJsonLoose,
   parseQuestions,
   parseResumeId,
   redactSecrets,
   stripFrontmatter,
   cleanReply,
+  validateVoiceRecord,
 } from './lib.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -37,6 +42,8 @@ const COPILOT_TIMEOUT_MS = 180_000;
 // 文字起こしは擬似。用意した文字起こしを、待ち時間を見せてから返す。
 const TRANSCRIBE_DELAY_MS = 3_000;
 const MAX_JSON_BYTES = 1024 * 1024;
+// 顧客管理の本体。エンドユーザの声の記録を、配列の JSON で持つ。書き込むのはこのサーバだけ。
+const CRM_FILE = 'docs/crm/エンドユーザの声.json';
 
 // Copilot に許さない操作。push・commit・GitHub への書き込みは人がやる。
 const DENY_FLAGS = [
@@ -60,11 +67,10 @@ const MIME_TYPES = {
   '.ogg': 'audio/ogg',
 };
 
-// 画面の一覧に出す置き場。docs/customer/ はまだ無いこともあるので、無ければ空にする。
+// 画面の一覧に出す置き場。フォルダが無ければ空にする。
 const LIST_DIRS = {
   customer: 'docs/customer',
   minutes: 'docs/minutes',
-  voice: 'docs/voice',
   hearing: 'docs/hearing',
   prd: 'docs/prd',
   audio: 'audio',
@@ -186,11 +192,11 @@ function runCopilot(text, resumeId) {
   });
 }
 
-// AI が書いた Markdown を、リポジトリの Prettier で整える（CI の Lint で落ちないように）。
+// AI やこのサーバが書いた Markdown と JSON を、リポジトリの Prettier で整える（CI の Lint で落ちないように）。
 // Prettier が入っていなければ何もしない。整形に失敗しても、文書はそのまま返す。
 async function formatDocs(paths) {
   const prettier = abs('node_modules/.bin/prettier');
-  const targets = paths.filter((p) => p.endsWith('.md'));
+  const targets = paths.filter((p) => p.endsWith('.md') || p.endsWith('.json'));
   if (targets.length === 0 || !(await exists('node_modules/.bin/prettier'))) return;
   await new Promise((resolve) => {
     const child = spawn(prettier, ['--write', ...targets], { cwd: ROOT, stdio: 'ignore' });
@@ -222,11 +228,10 @@ async function runPrompt({ prompt, input, resumeId, watchDir }) {
 const bullet = (label, paths) => paths.map((p) => `- ${label}：${p}`);
 
 async function handleAgenda(body) {
-  const company = await checkPaths(body.company, ['docs/customer']);
-  const person = await checkPaths(body.person, ['docs/customer', 'docs/voice']);
+  const user = await checkPaths(body.user, ['docs/customer']);
+  const inquiries = await checkPaths(body.inquiries, ['docs/customer', 'docs/crm']);
   const minutes = await checkPaths(body.minutes, ['docs/minutes']);
-  const extra = await checkPaths(body.extra, ['docs/voice', 'docs/customer', 'docs/hearing']);
-  if (company.length + person.length + minutes.length + extra.length === 0) {
+  if (user.length + inquiries.length + minutes.length === 0) {
     throw new UserError(400, '読ませるファイルを1つ以上選んでください。');
   }
   const savePath = nextFreePath('docs/hearing', `${formatDate()}_アジェンダ`, '.md', (p) =>
@@ -234,10 +239,9 @@ async function handleAgenda(body) {
   );
   const input = [
     '次のファイルを読んで、次のヒアリングのアジェンダを作ってください。',
-    ...bullet('お客さんの会社情報', company),
-    ...bullet('担当者の情報', person),
+    ...bullet('エンドユーザの情報', user),
+    ...bullet('これまでの問い合わせ', inquiries),
     ...bullet('過去の議事録', minutes),
-    ...bullet('そのほかの資料', extra),
     `保存先：${savePath}（このファイル名で新しく保存してください）`,
   ].join('\n');
   return runPrompt({ prompt: 'agenda', input, watchDir: 'docs/hearing' });
@@ -262,6 +266,71 @@ async function handleMinutes(body) {
   const savePath = nextFreePath('docs/minutes', stem, '.md', (p) => knownPaths.has(p));
   const input = `${transcript}\n\n保存先：${savePath}（このファイル名で新しく保存してください）`;
   return runPrompt({ prompt: 'minutes', input, watchDir: 'docs/minutes' });
+}
+
+async function readCrm() {
+  try {
+    const records = JSON.parse(await readFile(abs(CRM_FILE), 'utf8'));
+    return Array.isArray(records) ? records : [];
+  } catch {
+    return [];
+  }
+}
+
+// 文字起こしから、エンドユーザの声を1件、顧客管理に登録する。
+// AI には登録待ちの JSON を書かせ、このサーバが形と「そのままの言葉」を確かめてから本体に足す。
+async function handleCrm(body) {
+  const transcript = await checkPath(body.transcript, ['docs/hearing']);
+  const records = await readCrm();
+  if (records.some((r) => r.登録元 === transcript)) {
+    throw new UserError(409, 'この文字起こしは、もう顧客管理に登録してあります。');
+  }
+  const stem = basename(transcript, extname(transcript)).replace(/_(文字起こし|台本)$/, '');
+  const draftPath = `docs/crm/登録待ち_${stem}.json`;
+  const crmBefore = await readFile(abs(CRM_FILE), 'utf8').catch(() => null);
+  const input = `${transcript}\n\n保存先：${draftPath}（このファイル名で保存してください）`;
+  const result = await runPrompt({ prompt: 'crm', input, watchDir: 'docs/crm' });
+
+  // 本体は AI に書き換えさせない。書き換わっていたら元に戻す。
+  const crmAfter = await readFile(abs(CRM_FILE), 'utf8').catch(() => null);
+  if (crmBefore !== null && crmAfter !== crmBefore) await writeFile(abs(CRM_FILE), crmBefore);
+
+  const draft =
+    result.files.find((f) => f.path === draftPath) ||
+    result.files.find((f) => f.path.endsWith('.json') && f.path !== CRM_FILE);
+  if (!draft) {
+    throw new UserError(
+      502,
+      'AI は返事をしましたが、登録する記録が見つかりませんでした。もう一度押してください。',
+    );
+  }
+  let record;
+  try {
+    record = parseJsonLoose(draft.content);
+  } catch {
+    throw new UserError(
+      422,
+      `AI が書いた記録を読み取れなかったので、登録しませんでした（${draft.path}）。`,
+    );
+  }
+  const errors = validateVoiceRecord(record, await readFile(abs(transcript), 'utf8'));
+  if (errors.length > 0) {
+    throw new UserError(
+      422,
+      `記録に直すところがあったので、登録しませんでした（${draft.path}）。${errors.join(' ')}`,
+    );
+  }
+  const updated = appendVoiceRecord(records, record, transcript);
+  await writeFile(abs(CRM_FILE), `${JSON.stringify(updated, null, 2)}\n`);
+  await formatDocs([CRM_FILE]);
+  await unlink(abs(draft.path)).catch(() => {});
+  return {
+    sessionId: result.sessionId,
+    seconds: result.seconds,
+    path: CRM_FILE,
+    record: updated[updated.length - 1],
+    records: updated,
+  };
 }
 
 async function handlePrd(body) {
@@ -423,6 +492,7 @@ const ROUTES = {
   'POST /api/agenda': handleAgenda,
   'POST /api/transcribe': handleTranscribe,
   'POST /api/minutes': handleMinutes,
+  'POST /api/crm': handleCrm,
   'POST /api/prd': handlePrd,
   'POST /api/prd/answer': handlePrdAnswer,
 };
@@ -433,6 +503,10 @@ const server = createServer(async (req, res) => {
     if (!isTrustedRequest(req)) throw new UserError(403, 'この画面の外からは使えません。');
     if (req.method === 'GET' && url.pathname === '/api/files') {
       sendJson(res, 200, await handleFiles());
+      return;
+    }
+    if (req.method === 'GET' && url.pathname === '/api/crm') {
+      sendJson(res, 200, { path: CRM_FILE, records: await readCrm() });
       return;
     }
     if (req.method === 'GET' && url.pathname === '/api/audio') {
