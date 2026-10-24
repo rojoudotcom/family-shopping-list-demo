@@ -13,6 +13,10 @@ export const FILTERS = Object.freeze({
   BOUGHT: 'bought',
 });
 
+function normalizeName(name) {
+  return name.trim().toLowerCase();
+}
+
 /**
  * 品物を1件追加する。品名は前後の空白を除去し、空文字なら拒否する。
  * 新しい id は「現在の最大 id + 1」。外部カウンターに頼らず一意性を保てる。
@@ -24,6 +28,12 @@ export function addItem(items, name) {
   const trimmed = String(name ?? '').trim();
   if (!trimmed) {
     throw new Error('品名を入力してください');
+  }
+  const existing = items.find((item) => normalizeName(item.name) === normalizeName(trimmed));
+  if (existing) {
+    return existing.bought
+      ? items.map((item) => (item.id === existing.id ? { ...item, bought: false } : item))
+      : items;
   }
   const nextId = items.reduce((max, item) => Math.max(max, item.id), 0) + 1;
   return [...items, { id: nextId, name: trimmed, bought: false }];
