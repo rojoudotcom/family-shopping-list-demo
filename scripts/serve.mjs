@@ -31,6 +31,8 @@ const server = createServer(async (req, res) => {
     const body = await readFile(filePath);
     res.writeHead(200, {
       'Content-Type': MIME_TYPES[extname(filePath)] || 'application/octet-stream',
+      // デモ中に画面を直したとき、再読み込みで必ず新しいファイルを読むようにする
+      'Cache-Control': 'no-store',
     });
     res.end(body);
   } catch (error) {
