@@ -73,8 +73,11 @@ const minutesButton = document.getElementById('minutes-button');
 
 uploadButton.addEventListener('click', () => {
   uploadButton.disabled = true;
+  uploadButton.setAttribute('aria-busy', 'true');
   uploadWorking.hidden = false;
   setTimeout(() => {
+    uploadButton.removeAttribute('aria-busy');
+    uploadButton.textContent = 'アップロード済み';
     uploadWorking.hidden = true;
     uploadResult.hidden = false;
     minutesButton.disabled = false;
@@ -90,6 +93,7 @@ document.getElementById('register-button').addEventListener('click', (event) => 
   document.getElementById('voice-count').textContent = '6';
   document.getElementById('register-done').textContent = 'お客さんの声の6件目として登録しました';
   event.currentTarget.disabled = true;
+  event.currentTarget.textContent = '登録済み';
   newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
 pseudoAi('prd-button', 'prd-working', 'prd-doc');

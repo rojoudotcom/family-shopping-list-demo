@@ -328,6 +328,11 @@ p {
 
 .button:disabled {
   opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 待ちの印は、AI が書いている・アップロードしている間だけ出す */
+.button[aria-busy='true'] {
   cursor: progress;
 }
 
