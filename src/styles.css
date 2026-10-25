@@ -1,13 +1,15 @@
 :root {
-  --bg: #0d1117;
-  --surface: #161b22;
-  --surface-raised: #21262d;
-  --border: #30363d;
-  --text: #e6edf3;
-  --text-muted: #8b949e;
-  --accent: #238636;
-  --accent-hover: #2ea043;
-  --danger: #f85149;
+  /* お客さんが使うアプリは明るい色にして、暗い色の社内の管理画面（mock/）と見分けやすくする */
+  color-scheme: light;
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --surface-raised: #f6f8fa;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #59636e;
+  --accent: #1f883d;
+  --accent-hover: #1a7f37;
+  --danger: #cf222e;
   --radius: 8px;
 }
 
