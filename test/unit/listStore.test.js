@@ -13,6 +13,7 @@ import {
   addItem,
   toggleBought,
   deleteItem,
+  clearBought,
   filterItems,
   countToBuy,
   FILTERS,
@@ -68,6 +69,29 @@ test('deleteItem: 指定した id の品物だけ削除する', () => {
   assert.equal(remaining[0].name, 'パン');
 });
 
+test('AC-01 clearBought: チェックを付けた行がまとめて消える', () => {
+  let items = addItem(addItem(addItem([], '牛乳'), '卵'), 'パン');
+  items = toggleBought(toggleBought(items, 2), 3);
+
+  assert.deepEqual(clearBought(items), [{ id: 1, name: '牛乳', bought: false }]);
+});
+
+test('AC-02 clearBought: まだ買っていない品は同じ順で残る', () => {
+  let items = addItem(addItem(addItem(addItem([], '牛乳'), '卵'), 'パン'), 'りんご');
+  items = toggleBought(items, 2);
+
+  assert.deepEqual(
+    clearBought(items).map((item) => item.name),
+    ['牛乳', 'パン', 'りんご'],
+  );
+});
+
+test('AC-03 clearBought: チェックが1つもなければ変わらない', () => {
+  const items = addItem(addItem([], '牛乳'), '卵');
+
+  assert.deepEqual(clearBought(items), items);
+});
+
 test('filterItems: 絞り込み条件ごとに正しい部分集合を返す', () => {
   let items = addItem(addItem([], 'まだ買っていない品物'), '買った品物');
   items = toggleBought(items, 2);
@@ -102,6 +126,7 @@ test('どの関数も引数の配列と品物を書き換えない（イミュ�
   addItem(original, 'りんご');
   toggleBought(original, 1);
   deleteItem(original, 1);
+  clearBought(original);
   filterItems(original, FILTERS.TO_BUY);
   countToBuy(original);
 

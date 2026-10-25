@@ -9,6 +9,7 @@ import {
   addItem,
   toggleBought,
   deleteItem,
+  clearBought,
   filterItems,
   countToBuy,
   FILTERS,
@@ -32,6 +33,7 @@ const formError = document.querySelector('#form-error');
 const list = document.querySelector('#item-list');
 const counter = document.querySelector('#to-buy-count');
 const emptyState = document.querySelector('#empty-state');
+const clearBoughtButton = document.querySelector('#clear-bought-button');
 const filterButtons = document.querySelectorAll('[data-filter]');
 
 function load() {
@@ -126,6 +128,10 @@ form.addEventListener('submit', (event) => {
   input.value = '';
   update(nextItems);
   input.focus();
+});
+
+clearBoughtButton.addEventListener('click', () => {
+  update(clearBought(items));
 });
 
 input.addEventListener('input', () => {

@@ -50,6 +50,15 @@ export function deleteItem(items, id) {
 }
 
 /**
+ * 買った品物をすべて削除する。
+ * @param {Array} items
+ * @returns {Array}
+ */
+export function clearBought(items) {
+  return items.filter((item) => !item.bought);
+}
+
+/**
  * 絞り込み条件に一致する品物だけを返す。
  * @param {Array} items
  * @param {string} filter FILTERS のいずれか
