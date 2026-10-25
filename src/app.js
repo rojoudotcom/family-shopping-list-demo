@@ -13,6 +13,7 @@ import {
   countToBuy,
   FILTERS,
 } from './listStore.js';
+import { SAMPLE_ITEMS } from './sampleItems.js';
 
 const STORAGE_KEY = 'family-shopping-list-items';
 
@@ -24,6 +25,7 @@ const EMPTY_MESSAGES = {
 };
 
 let items = load();
+save();
 let activeFilter = FILTERS.ALL;
 
 const form = document.querySelector('#new-item-form');
@@ -34,10 +36,22 @@ const counter = document.querySelector('#to-buy-count');
 const emptyState = document.querySelector('#empty-state');
 const filterButtons = document.querySelectorAll('[data-filter]');
 
+// 見本のリスト（デモ用）の写しを返す。
+function sampleItems() {
+  return SAMPLE_ITEMS.map((item) => ({ ...item }));
+}
+
 function load() {
+  // URL に「?sample」を付けて開くと、見本のリストに戻す（デモの開始時と、機能を足したあとに使う）。
+  // 戻したあとは URL から外し、再読み込みで見本に戻らないようにする。
+  if (new window.URLSearchParams(window.location.search).has('sample')) {
+    window.history.replaceState(null, '', window.location.pathname);
+    return sampleItems();
+  }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
+    // 初めて開いたとき（保存が無いとき）は、見本のリストで始める。
+    const parsed = raw === null ? sampleItems() : JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     // 保存データが壊れている・使えない場合でもアプリを止めない。空で始める。
