@@ -203,6 +203,23 @@ body {
   color: var(--danger);
 }
 
+.clear-bought {
+  display: block;
+  margin: 1rem 0 0 auto;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.clear-bought:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
 .empty-state {
   margin: 1rem 0 0;
   text-align: center;
