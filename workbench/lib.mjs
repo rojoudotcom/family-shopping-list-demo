@@ -40,7 +40,7 @@ export function parseResumeId(output) {
 //   1. 買った品目は、どう見せますか？
 //      - A. 末尾へ移す
 //      - B 一覧から隠す
-//   2. すでに2行の品目は、どう扱いますか。（A. 利用者が消す／B. 自動でまとめる）
+//   2. 買った品目は、いつ消しますか。（A. ボタンを押したとき／B. 自動で消す）
 // 選択肢が2つ以上ある質問だけを残す。1件も取れなければ空の配列を返す。
 const OPTION_LINE = /^\s*(?:[-*・]\s*)?(?:[(（]\s*)?([A-DＡ-Ｄ])(?:\s*[.．)）:：、]\s*|\s+)(.+)$/;
 const KEYED_LABEL = /^([A-DＡ-Ｄ])(?:\s*[.．)）:：、]\s*|\s+)(.+)$/;
@@ -204,13 +204,7 @@ export function cleanReply(text) {
 
 // 1件の記録が持つ項目と、決まった言葉から選ぶ項目の選択肢（.github/prompts/crm.prompt.md と同じ）。
 export const VOICE_CHANNELS = ['ヒアリング', '電話', 'メール', 'アプリ内の問い合わせフォーム'];
-export const VOICE_CATEGORIES = [
-  '同じ品が2行になる',
-  '買った品の見せ方',
-  '家族での共有',
-  '文字の見やすさ',
-  'そのほか',
-];
+export const VOICE_CATEGORIES = ['買った品の見せ方', '家族での共有', '文字の見やすさ', 'そのほか'];
 export const VOICE_STATUSES = ['回答済み', '開発チームへ共有', '要望として記録', '対応中'];
 const VOICE_TEXT_FIELDS = ['お客さん', '困りごと', '要望'];
 
