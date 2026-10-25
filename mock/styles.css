@@ -250,51 +250,44 @@ p {
   background: var(--surface-raised);
 }
 
-/* --- 問い合わせのタイムライン --- */
+/* --- お客さんのページの見出し --- */
 
-.timeline {
-  list-style: none;
+.family {
+  border-left: 4px solid var(--accent);
+}
+
+.family__label {
   margin: 0;
-  padding: 0 0 0 0.9rem;
-  border-left: 2px solid var(--border);
-}
-
-.timeline li {
-  position: relative;
-  padding: 0 0 0.55rem 0.5rem;
-}
-
-.timeline li::before {
-  content: '';
-  position: absolute;
-  left: -1.28rem;
-  top: 0.45rem;
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 50%;
-  background: var(--text-muted);
-}
-
-.timeline p {
-  margin: 0;
-}
-
-.timeline__meta {
   color: var(--text-muted);
   font-size: 0.85rem;
 }
 
-.tag {
-  margin-left: 0.5rem;
-  padding: 0 0.45rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  font-size: 0.75rem;
+.family .family__name {
+  margin: 0.1rem 0 0.5rem;
+  font-size: 2rem;
 }
 
-.tag--warn {
-  border-color: var(--warn);
-  color: var(--warn);
+.family__members {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 0.4rem;
+  padding: 0;
+}
+
+.family__members li {
+  padding: 0.15rem 0.7rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.family__meta {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
 }
 
 /* --- バッジ --- */
