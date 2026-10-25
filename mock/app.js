@@ -5,9 +5,30 @@
 // 本物のもの: 「画面で確かめる」の「買った品を消す」。アプリと同じ src/listStore.js を読み込んで使います。
 //             機能の PR をマージする前の main には clearBought が無いので、行は消えません。
 
-// clearBought は機能の PR で足す関数です。マージ前の main に無くても画面が動くよう、
-// 名前を指定せずに読み込み、あるかどうかを確かめてから使います。
-import * as store from '../src/listStore.js';
+// QA は、マージの前に PR のブランチのコードで確かめる。手元は main のままにしたいので、
+// PR のブランチの src/listStore.js を GitHub から読み込んで使う。読めないとき（マージして
+// ブランチが消えた後など）は、手元の src/listStore.js を使う。
+import * as localStore from '../src/listStore.js';
+
+const PR_BRANCH = 'copilot/add-delete-purchased-items-button';
+const PR_SOURCE = `https://raw.githubusercontent.com/rojoudotcom/family-shopping-list-demo/${PR_BRANCH}/src/listStore.js`;
+
+async function loadPrStore() {
+  try {
+    const response = await window.fetch(PR_SOURCE, { cache: 'no-store' });
+    if (!response.ok) {
+      return null;
+    }
+    const code = await response.text();
+    const url = window.URL.createObjectURL(new window.Blob([code], { type: 'text/javascript' }));
+    return await import(url);
+  } catch {
+    return null;
+  }
+}
+
+const prStore = await loadPrStore();
+const store = prStore ?? localStore;
 
 const AI_WAIT_MS = 2000;
 
@@ -146,9 +167,10 @@ function itemsFromRows(rows) {
 
 // いま読み込んでいる src/listStore.js が、マージ前と後のどちらかを見分ける。
 function describeEngine() {
+  const source = prStore ? `PR のブランチ（${PR_BRANCH}）` : '手元の main';
   engineState.textContent = hasClearBought
-    ? 'いまのアプリ：新しい動き（チェックを付けた行をまとめて消せる）'
-    : 'いまのアプリ：マージ前の main の動き（まとめて消す機能はまだ無い）';
+    ? `確かめているコード：${source}。新しい動き（チェックを付けた行をまとめて消せる）`
+    : `確かめているコード：${source}。まとめて消す機能はまだ無い`;
   engineState.dataset.state = hasClearBought ? 'new' : 'old';
 }
 
