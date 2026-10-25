@@ -1,18 +1,22 @@
-/* 社内の管理画面（デモ用のモックアップ）。色はアプリ（src/styles.css）と同じ値を写してある。 */
+/* 社内の管理画面（デモ用のモックアップ）。明るい色にし、お客さんのアプリ（緑）と見分けるため、
+   上の帯を紺、ボタンを青にしている。 */
 
 :root {
-  --bg: #0d1117;
-  --surface: #161b22;
-  --surface-raised: #21262d;
-  --border: #30363d;
-  --text: #e6edf3;
-  --text-muted: #8b949e;
-  --accent: #238636;
-  --accent-hover: #2ea043;
-  --danger: #f85149;
-  --warn: #d29922;
-  --ai: #a371f7;
-  --link: #58a6ff;
+  color-scheme: light;
+  --bg: #f3f5f9;
+  --surface: #ffffff;
+  --surface-raised: #eef2f7;
+  --border: #d4dae3;
+  --text: #1f2328;
+  --text-muted: #5b6573;
+  --accent: #0969da;
+  --accent-hover: #0757b8;
+  --ok: #1a7f37;
+  --danger: #cf222e;
+  --warn: #9a6700;
+  --ai: #8250df;
+  --link: #0969da;
+  --header: #1b2a41;
   --radius: 8px;
 }
 
@@ -30,20 +34,23 @@ body {
   line-height: 1.55;
 }
 
-/* --- ヘッダーとタブ --- */
+/* --- ヘッダー --- */
 
-.site-header {
+.sticky-top {
   position: sticky;
   top: 0;
   z-index: 1;
+}
+
+.site-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem 1.5rem;
   padding: 0.75rem 1.5rem;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: var(--header);
+  color: #ffffff;
 }
 
 .app-name {
@@ -54,44 +61,9 @@ body {
 
 .mock-note {
   margin-left: 0.25rem;
-  color: var(--text-muted);
+  color: #c3ccd8;
   font-size: 0.9rem;
   font-weight: 400;
-}
-
-.tabs {
-  display: flex;
-  gap: 0.35rem;
-}
-
-.tab {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0.4rem 0.9rem;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--radius);
-  color: var(--text-muted);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.tab small {
-  font-size: 0.75rem;
-  font-weight: 400;
-}
-
-.tab:hover {
-  color: var(--text);
-}
-
-.tab[aria-selected='true'] {
-  background: var(--surface-raised);
-  border-color: var(--border);
-  color: var(--text);
-  box-shadow: inset 0 -3px 0 var(--accent);
 }
 
 /* --- レイアウト --- */
@@ -130,6 +102,23 @@ body {
   top: 50%;
   transform: translate(-50%, -50%);
   color: var(--text-muted);
+}
+
+.process__link {
+  display: flex;
+  gap: 0.45rem;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.process__step:has(.process__link):hover {
+  border-color: var(--accent);
+  cursor: pointer;
+}
+
+.process__step--elsewhere {
+  border-style: dashed;
 }
 
 .process__no {
@@ -304,7 +293,7 @@ p {
 
 .badge--done {
   background: rgba(35, 134, 54, 0.2);
-  color: #3fb950;
+  color: var(--ok);
 }
 
 .badge--ai {
@@ -429,7 +418,7 @@ p {
 }
 
 .registered {
-  color: #3fb950;
+  color: var(--ok);
   font-weight: 700;
 }
 
@@ -531,14 +520,14 @@ p {
 .poll__result {
   min-height: 1.5rem;
   margin: 0.5rem 0 0;
-  color: #3fb950;
+  color: var(--ok);
   font-weight: 600;
 }
 
 /* --- QA --- */
 
 .pass {
-  color: #3fb950;
+  color: var(--ok);
   font-weight: 700;
 }
 
@@ -558,7 +547,7 @@ p {
 }
 
 .engine[data-state='new'] {
-  color: #3fb950;
+  color: var(--ok);
 }
 
 .try-form {
@@ -618,7 +607,7 @@ p {
 }
 
 .try-count[data-verdict='ok'] {
-  color: #3fb950;
+  color: var(--ok);
 }
 
 .try-count[data-verdict='ng'] {
@@ -630,6 +619,6 @@ p {
 }
 
 .copied {
-  color: #3fb950;
+  color: var(--ok);
   font-size: 0.9rem;
 }
