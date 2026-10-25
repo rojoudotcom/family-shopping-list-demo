@@ -6,29 +6,46 @@
 //             機能の PR をマージする前の main には clearBought が無いので、行は消えません。
 
 // QA は、マージの前に PR のブランチのコードで確かめる。手元は main のままにしたいので、
-// PR のブランチの src/listStore.js を GitHub から読み込んで使う。読めないとき（マージして
-// ブランチが消えた後など）は、手元の src/listStore.js を使う。
+// いま開いている Copilot の PR を GitHub で探し、そのブランチの src/listStore.js を読み込んで使う。
+// 見つからないとき（PR がまだ無い、マージしてブランチが消えた後など）は、手元の src/listStore.js を使う。
 import * as localStore from '../src/listStore.js';
 
-const PR_BRANCH = 'copilot/add-delete-purchased-items-button';
-const PR_SOURCE = `https://raw.githubusercontent.com/rojoudotcom/family-shopping-list-demo/${PR_BRANCH}/src/listStore.js`;
+const REPO = 'rojoudotcom/family-shopping-list-demo';
+
+// いま開いている Copilot の PR（ブランチ名が copilot/ で始まるもの）のうち、一番新しいものを探す。
+async function findPrBranch() {
+  const response = await window.fetch(`https://api.github.com/repos/${REPO}/pulls?state=open`, {
+    cache: 'no-store',
+  });
+  if (!response.ok) {
+    return null;
+  }
+  const pulls = await response.json();
+  const pr = pulls.find((pull) => pull.head.ref.startsWith('copilot/'));
+  return pr ? { number: pr.number, branch: pr.head.ref } : null;
+}
 
 async function loadPrStore() {
   try {
-    const response = await window.fetch(PR_SOURCE, { cache: 'no-store' });
+    const pr = await findPrBranch();
+    if (!pr) {
+      return null;
+    }
+    const source = `https://raw.githubusercontent.com/${REPO}/${pr.branch}/src/listStore.js`;
+    const response = await window.fetch(source, { cache: 'no-store' });
     if (!response.ok) {
       return null;
     }
     const code = await response.text();
     const url = window.URL.createObjectURL(new window.Blob([code], { type: 'text/javascript' }));
-    return await import(url);
+    return { pr, module: await import(url) };
   } catch {
     return null;
   }
 }
 
 const prStore = await loadPrStore();
-const store = prStore ?? localStore;
+const store = prStore ? prStore.module : localStore;
 
 const AI_WAIT_MS = 2000;
 
@@ -167,7 +184,9 @@ function itemsFromRows(rows) {
 
 // いま読み込んでいる src/listStore.js が、マージ前と後のどちらかを見分ける。
 function describeEngine() {
-  const source = prStore ? `PR のブランチ（${PR_BRANCH}）` : '手元の main';
+  const source = prStore
+    ? `PR #${prStore.pr.number} のブランチ（${prStore.pr.branch}）`
+    : '手元の main';
   engineState.textContent = hasClearBought
     ? `確かめているコード：${source}。新しい動き（チェックを付けた行をまとめて消せる）`
     : `確かめているコード：${source}。まとめて消す機能はまだ無い`;
