@@ -30,6 +30,54 @@
       </nav>
     </header>
 
+    <!-- デモの作業プロセスと担当者。いま開いているタブの工程に色が付く（mock/app.js の showScreen） -->
+    <nav class="process" aria-label="デモの作業プロセスと担当者">
+      <ol>
+        <li class="process__step" data-screen="crm">
+          <span class="process__no">1</span>
+          <span class="process__body">
+            <span class="process__role">営業担当者</span>
+            <span class="process__work">議事録・お客さんの声</span>
+          </span>
+        </li>
+        <li class="process__step" data-screen="prd">
+          <span class="process__no">2</span>
+          <span class="process__body">
+            <span class="process__role">企画担当者</span>
+            <span class="process__work">PRD（Issue）</span>
+          </span>
+        </li>
+        <li class="process__step">
+          <span class="process__no">3</span>
+          <span class="process__body">
+            <span class="process__role">エンジニア＋Copilot</span>
+            <span class="process__work">要件定義書・設計書・チケット</span>
+          </span>
+        </li>
+        <li class="process__step">
+          <span class="process__no">4</span>
+          <span class="process__body">
+            <span class="process__role">Copilot＋エンジニア</span>
+            <span class="process__work">開発・PR・CI・レビュー</span>
+          </span>
+        </li>
+        <li class="process__step" data-screen="qa">
+          <span class="process__no">5</span>
+          <span class="process__body">
+            <span class="process__role">QA</span>
+            <span class="process__work">受け入れ条件の確認</span>
+          </span>
+        </li>
+        <li class="process__step">
+          <span class="process__no">6</span>
+          <span class="process__body">
+            <span class="process__role">エンジニア</span>
+            <span class="process__work">マージ・公開</span>
+          </span>
+        </li>
+      </ol>
+    </nav>
+
     <main>
       <!-- ① 顧客管理（CRM）：営業担当者の画面 -->
       <section class="screen" id="screen-crm" role="tabpanel" aria-labelledby="tab-crm">

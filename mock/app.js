@@ -14,6 +14,7 @@ const AI_WAIT_MS = 2000;
 // --- タブ ---------------------------------------------------------------
 
 const tabs = [...document.querySelectorAll('.tab')];
+const processSteps = [...document.querySelectorAll('.process__step')];
 
 function showScreen(name) {
   const known = tabs.some((tab) => tab.dataset.screen === name);
@@ -22,6 +23,13 @@ function showScreen(name) {
     const selected = tab.dataset.screen === target;
     tab.setAttribute('aria-selected', String(selected));
     document.getElementById(`screen-${tab.dataset.screen}`).hidden = !selected;
+  }
+  for (const step of processSteps) {
+    if (step.dataset.screen === target) {
+      step.setAttribute('aria-current', 'step');
+    } else {
+      step.removeAttribute('aria-current');
+    }
   }
 }
 
