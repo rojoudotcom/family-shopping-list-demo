@@ -1,7 +1,7 @@
 // 社内の管理画面（デモ用のモックアップ）の動き。
 //
 // 擬似のもの: タブの切り替え、「AI に〜させる」ボタン（2秒待って用意済みの文書を見せるだけ）、
-//             投票の結果、CI の結果の ✓、QA のコメントのコピー。AI は呼びません。
+//             CI の結果の ✓、QA のコメントのコピー。AI は呼びません。
 // 本物のもの: 「画面で確かめる」の行の追加。アプリと同じ addItem を読み込んで使います。
 //             そのため、機能の PR をマージする前は main の動き（同じ名前でも行が増える）になります。
 
@@ -51,22 +51,9 @@ function pseudoAi(buttonId, workingId, docId) {
   });
 }
 
+pseudoAi('agenda-button', 'agenda-working', 'agenda-doc');
 pseudoAi('minutes-button', 'minutes-working', 'minutes-doc');
 pseudoAi('prd-button', 'prd-working', 'prd-doc');
-
-// --- 投票（擬似） --------------------------------------------------------
-
-const pollOptions = [...document.querySelectorAll('.poll__option')];
-const pollResult = document.getElementById('poll-result');
-
-for (const option of pollOptions) {
-  option.addEventListener('click', () => {
-    for (const other of pollOptions) {
-      other.setAttribute('aria-pressed', String(other === option));
-    }
-    pollResult.textContent = `投票の結果：「${option.textContent.trim()}」を次に作る`;
-  });
-}
 
 // --- 画面で確かめる（本物の addItem） --------------------------------------
 

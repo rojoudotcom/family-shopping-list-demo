@@ -100,6 +100,11 @@
             <h2>ヒアリング2回目（2026-10-19）</h2>
             <ol class="steps">
               <li class="step">
+                <span class="step__name">アジェンダ</span>
+                <span class="badge badge--done">作成済み</span>
+                <span class="badge badge--ai">AI が作成</span>
+              </li>
+              <li class="step">
                 <span class="step__name">録音</span>
                 <span class="badge badge--done">作成済み</span>
               </li>
@@ -114,6 +119,32 @@
                 <span class="badge badge--ai">AI が作成</span>
               </li>
             </ol>
+
+            <div class="actions">
+              <button type="button" class="button" id="agenda-button">
+                AI にアジェンダを作らせる
+              </button>
+              <span class="working" id="agenda-working" hidden>AI が書いています…</span>
+            </div>
+
+            <!-- 出典：docs/hearing/2026-10-24_アジェンダ.md（要点を抜粋） -->
+            <article class="doc" id="agenda-doc" hidden>
+              <p class="doc__head">
+                アジェンダ：ヒアリング2回目<span class="badge badge--ai">AI が作成</span>
+              </p>
+              <p>
+                <strong>元にした資料</strong
+                >　お客さんの情報、問い合わせ5件、ヒアリング1回目の議事録
+              </p>
+              <h3>今日の目的</h3>
+              <p>同じ品を1行にまとめる方向で、家族の場面に抜けがないかを確かめる。</p>
+              <h3>聞くこと</h3>
+              <ul>
+                <li>「Milk」と「milk」、音声入力の「牛乳 」で、2行になった場面</li>
+                <li>店で、もうリストにある品かどうかを見分けたい場面</li>
+                <li>買った品を、買ったあとどうしたいか（Bさんは消したい、Aさんは見返したい）</li>
+              </ul>
+            </article>
 
             <div class="actions">
               <button type="button" class="button" id="minutes-button">
@@ -303,23 +334,6 @@
                 <li>議事録：ヒアリング2回目（2026-10-19）</li>
                 <li>顧客管理：お客さんの声（6件）</li>
               </ul>
-            </section>
-
-            <section class="card">
-              <h2>次に作るものを投票で決める</h2>
-              <p class="muted">Zoom の投票の結果を選びます（擬似）。</p>
-              <div class="poll" role="group" aria-label="次に作るものの候補">
-                <button type="button" class="poll__option" aria-pressed="false">
-                  買った品を末尾へ移す
-                </button>
-                <button type="button" class="poll__option" aria-pressed="false">
-                  チェック済みの品を足したら戻す
-                </button>
-                <button type="button" class="poll__option" aria-pressed="false">
-                  家族の端末で共有する
-                </button>
-              </div>
-              <p class="poll__result" id="poll-result" aria-live="polite"></p>
             </section>
           </div>
         </div>
