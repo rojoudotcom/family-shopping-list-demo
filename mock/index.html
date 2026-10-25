@@ -257,7 +257,8 @@
               <h3>なぜ作るのか</h3>
               <p>
                 同じ品が2行になり、片方にだけチェックが付く。残った行を見て、同じ物を2回買ってしまう。
-                問い合わせ5件のうち3件がこの困りごとで、2回目のヒアリングでも、2週間で牛乳が2回、卵が1回、2行になった。
+                問い合わせ5件のうち3件がこの困りごと。2行になる原因は入力の揺れで、「Milk」と「milk」、音声入力で末尾に空白が付いた「牛乳
+                」と「牛乳」が別の行になる。
               </p>
 
               <h3>誰のためか</h3>
@@ -346,7 +347,9 @@
                 <td>「牛乳」がある</td>
                 <td>「牛乳」を足す</td>
                 <td>行は1つのまま</td>
-                <td><span class="pass">✓</span> AC-01 同じ名前を足すと行が増えない</td>
+                <td>
+                  <span class="pass">✓</span> AC-01 addItem: 同じ名前の品を足しても、行は増えない
+                </td>
                 <td>
                   <button type="button" class="button button--small" data-ac="AC-01">
                     この条件で試す
@@ -360,8 +363,8 @@
                 <td>「Milk」や「 milk 」を足す</td>
                 <td>行は1つのまま</td>
                 <td>
-                  <span class="pass">✓</span> AC-02
-                  大文字・小文字と前後の空白だけが違う名前は同じ品になる
+                  <span class="pass">✓</span> AC-02 addItem:
+                  大文字・小文字と前後の空白の違いは同じ品として扱う
                 </td>
                 <td>
                   <button type="button" class="button button--small" data-ac="AC-02">
@@ -375,7 +378,7 @@
                 <td>「牛乳」がある</td>
                 <td>「卵」を足す</td>
                 <td>行が2つになる</td>
-                <td><span class="pass">✓</span> AC-03 違う名前は別の行になる</td>
+                <td><span class="pass">✓</span> AC-03 addItem: 違う名前の品を足すと、行が増える</td>
                 <td>
                   <button type="button" class="button button--small" data-ac="AC-03">
                     この条件で試す
