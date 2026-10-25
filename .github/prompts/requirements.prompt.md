@@ -1,5 +1,5 @@
 ---
-description: PRD から、テンプレートの形の要件定義書を書く
+description: PRD から、テンプレートの形の要件定義書を書く（設計書まで一度に書くなら /spec）
 agent: agent
 ---
 

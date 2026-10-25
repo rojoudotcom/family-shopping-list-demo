@@ -17,17 +17,17 @@
 
 3つの役割が、それぞれの文書を AI と作り、次の役割に渡します。各段階の指示は `.github/prompts/`、文書の形は `docs/templates/` にあります。
 
-| 役割                 | 段階                                                            | 呼び出し                 | 置き場                              |
-| -------------------- | --------------------------------------------------------------- | ------------------------ | ----------------------------------- |
-| 営業・サポート担当者 | 利用者の情報と過去の記録から、ヒアリングのアジェンダを作る      | `/agenda`                | `docs/hearing/`                     |
-|                      | ヒアリングの文字起こしから議事録を作る                          | `/minutes`               | `docs/minutes/`                     |
-| 企画担当者           | 議事録と問い合わせの記録から、PRD を GitHub の Issue として書く | github.com の Copilot    | GitHub の Issue（Project に載せる） |
-| エンジニア           | PRD から要件定義書を作る                                        | `/requirements`          | `docs/requirements/`                |
-|                      | 要件定義書から設計書を作る                                      | `/design`                | `docs/design/`                      |
-|                      | 要件定義書から Issue を作る                                     | `/issues`                | GitHub の Issue（Project に載せる） |
-|                      | Issue を Copilot に任せ、PR・CI・レビューを経てマージする       | Issue の担当者に Copilot | `main`                              |
+| 役割                 | 段階                                                                                 | 呼び出し                 | 置き場                               |
+| -------------------- | ------------------------------------------------------------------------------------ | ------------------------ | ------------------------------------ |
+| 営業・サポート担当者 | 利用者の情報と過去の記録から、ヒアリングのアジェンダを作る                           | `/agenda`                | `docs/hearing/`                      |
+|                      | ヒアリングの文字起こしから議事録を作る                                               | `/minutes`               | `docs/minutes/`                      |
+| 企画担当者           | 議事録と問い合わせの記録から、PRD を GitHub の Issue として書く                      | github.com の Copilot    | GitHub の Issue（Project に載せる）  |
+| エンジニア           | PRD から要件定義書と設計書（ユースケース図・アーキテクチャ図・ERD つき）を一度に作る | `/spec`                  | `docs/requirements/`・`docs/design/` |
+|                      | 設計書のタスクから Issue を作る                                                      | `/issues`                | GitHub の Issue（Project に載せる）  |
+|                      | Issue を Copilot に任せ、PR・CI・レビューを経てマージする                            | Issue の担当者に Copilot | `main`                               |
 
 PRD とチケットの Issue は、リポジトリのかんばんの GitHub Project「家族の買い物リスト」に載せ、進み具合を見ます。
+要件定義書だけ、設計書だけを書き直すときは、`/requirements`・`/design` を使います。
 要件定義書と設計書は `docs/` のファイルのままにし、PRD の Issue とチケットの「関連」からリンクします。
 
 `main` にマージすると GitHub Pages に公開され、PR の説明の `Fixes #番号` で Issue が閉じます。
