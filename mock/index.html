@@ -173,8 +173,43 @@
               </ul>
             </article>
 
+            <!-- 録音と文字起こしのアップロード（擬似）。ファイルは audio/ と docs/hearing/ に用意してある -->
+            <div class="upload">
+              <p class="upload__title">打ち合わせの録音と文字起こし</p>
+              <p class="upload__drop">
+                ここにファイルを置いてアップロード（デモでは、用意したファイルを使います）
+              </p>
+              <div class="actions">
+                <button type="button" class="button" id="upload-button">
+                  録音と文字起こしをアップロードする
+                </button>
+                <span class="working" id="upload-working" hidden>アップロードしています…</span>
+              </div>
+              <div class="upload__result" id="upload-result" hidden>
+                <ul class="upload__files">
+                  <li>
+                    <span class="tag">録音</span>2026-10-19_ヒアリング2回目.m4a<span
+                      class="badge badge--done"
+                      >アップロード済み</span
+                    >
+                  </li>
+                  <li>
+                    <span class="tag">文字起こし</span
+                    >2026-10-19_ヒアリング2回目_文字起こし.txt<span class="badge badge--done"
+                      >アップロード済み</span
+                    >
+                  </li>
+                </ul>
+                <!-- 出典：docs/hearing/2026-10-19_ヒアリング2回目_文字起こし.txt（4〜5行目） -->
+                <blockquote class="upload__preview">
+                  Bさん：1行ずつ「削除」を押しました。12行あったときは12回押して、途中で嫌になりました。<br />
+                  Aさん：私は消さずに、そのままにしていました。その週は、まだ買っていない卵がチェック済みの行の間に埋もれていて、見落として買い忘れました。
+                </blockquote>
+              </div>
+            </div>
+
             <div class="actions">
-              <button type="button" class="button" id="minutes-button">
+              <button type="button" class="button" id="minutes-button" disabled>
                 AI に議事録を作らせる
               </button>
               <span class="working" id="minutes-working" hidden>AI が書いています…</span>
@@ -207,11 +242,16 @@
                 <li>消す前に確かめる画面と、元に戻す操作。次の段階で相談する。</li>
               </ul>
             </article>
+
+            <div class="actions" id="register-actions" hidden>
+              <button type="button" class="button" id="register-button">顧客管理に登録する</button>
+              <span class="registered" id="register-done" aria-live="polite"></span>
+            </div>
           </section>
         </div>
 
         <section class="card">
-          <h2>お客さんの声（6件）</h2>
+          <h2>お客さんの声（<span id="voice-count">5</span>件）</h2>
           <!-- 出典：docs/crm/お客さんの声.json（1〜5）と、ヒアリング2回目の文字起こし（6） -->
           <table class="table">
             <thead>
@@ -273,7 +313,7 @@
                 <td>「また買い忘れが起きました。」</td>
                 <td>対応中</td>
               </tr>
-              <tr class="is-new">
+              <tr class="is-new" id="voice-new" hidden>
                 <td>6</td>
                 <td>10-19</td>
                 <td>Aさん・Bさん</td>

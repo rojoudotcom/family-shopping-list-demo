@@ -43,7 +43,7 @@ showScreen(window.location.hash.slice(1));
 
 // --- 「AI に〜させる」（擬似） ---------------------------------------------
 
-function pseudoAi(buttonId, workingId, docId) {
+function pseudoAi(buttonId, workingId, docId, onDone = () => {}) {
   const button = document.getElementById(buttonId);
   const working = document.getElementById(workingId);
   const doc = document.getElementById(docId);
@@ -57,12 +57,47 @@ function pseudoAi(buttonId, workingId, docId) {
       doc.hidden = false;
       button.disabled = false;
       button.removeAttribute('aria-busy');
+      onDone();
     }, AI_WAIT_MS);
   });
 }
 
 pseudoAi('agenda-button', 'agenda-working', 'agenda-doc');
-pseudoAi('minutes-button', 'minutes-working', 'minutes-doc');
+pseudoAi('minutes-button', 'minutes-working', 'minutes-doc', () => {
+  document.getElementById('register-actions').hidden = false;
+});
+
+// --- 録音と文字起こしのアップロード（擬似） -------------------------------
+// 1.5秒待ってから、用意しておいたファイルを「アップロード済み」として見せる。
+// アップロードが済むまで、「AI に議事録を作らせる」は押せない。
+
+const UPLOAD_WAIT_MS = 1500;
+const uploadButton = document.getElementById('upload-button');
+const uploadWorking = document.getElementById('upload-working');
+const uploadResult = document.getElementById('upload-result');
+const minutesButton = document.getElementById('minutes-button');
+
+uploadButton.addEventListener('click', () => {
+  uploadButton.disabled = true;
+  uploadWorking.hidden = false;
+  setTimeout(() => {
+    uploadWorking.hidden = true;
+    uploadResult.hidden = false;
+    minutesButton.disabled = false;
+  }, UPLOAD_WAIT_MS);
+});
+
+// --- 顧客管理への登録（擬似） ---------------------------------------------
+// 議事録から整えたお客さんの声（6件目）を、表に足して見せる。
+
+document.getElementById('register-button').addEventListener('click', (event) => {
+  const newRow = document.getElementById('voice-new');
+  newRow.hidden = false;
+  document.getElementById('voice-count').textContent = '6';
+  document.getElementById('register-done').textContent = 'お客さんの声の6件目として登録しました';
+  event.currentTarget.disabled = true;
+  newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
 pseudoAi('prd-button', 'prd-working', 'prd-doc');
 
 // --- 画面で確かめる（本物の clearBought） ---------------------------------
