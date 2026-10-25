@@ -41,5 +41,5 @@ github.com の Copilot と下書きし、書いたらリポジトリの Project�
 - 元になった声
   - 議事録：〈docs/minutes/…〉
   - 顧客管理のお客さんの声：docs/crm/お客さんの声.json
-- 要件定義書：〈docs/requirements/…〉
-- 設計書：〈docs/design/…〉
+- 要件定義書：〈docs/specs/…/要件定義書.md〉
+- 設計書：〈docs/specs/…/設計書.md〉

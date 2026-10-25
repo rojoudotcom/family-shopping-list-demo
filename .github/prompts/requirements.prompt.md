@@ -3,7 +3,7 @@ description: PRD から、テンプレートの形の要件定義書を書く（
 agent: agent
 ---
 
-指定した PRD と、README.md・src/ を読み、`docs/templates/要件定義書.md` の形で要件定義書を書き、`docs/requirements/` に保存してください。
+指定した PRD と、README.md・src/ を読み、`docs/templates/要件定義書.md` の形で要件定義書を書き、`docs/specs/〈機能の名前〉/要件定義書.md` に保存してください。〈機能の名前〉は、PRD の Issue のタイトルの「PRD：」のあとの名前にします。
 
 - PRD は、Issue 番号（`#番号`）かファイルのパスで指定します。Issue 番号なら、GitHub の MCP サーバーでその Issue を読んでください。パスなら、そのファイルを読んでください。
 - 「元の PRD」には、Issue なら `#番号`、ファイルならパスを書いてください。
