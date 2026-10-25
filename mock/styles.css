@@ -198,6 +198,10 @@ main {
   align-items: start;
 }
 
+.columns--hearings {
+  grid-template-columns: 2fr 3fr;
+}
+
 .columns--wide-left {
   grid-template-columns: 3fr 2fr;
 }
@@ -470,6 +474,7 @@ p {
   font-weight: 700;
 }
 
+.card > h3,
 .doc h3 {
   margin: 0.75rem 0 0.25rem;
   font-size: 0.95rem;
