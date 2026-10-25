@@ -1,6 +1,6 @@
 // 社内の管理画面（デモ用のモックアップ）の動き。
 //
-// 擬似のもの: タブの切り替え、「AI に〜させる」ボタン（2秒待って用意済みの文書を見せるだけ）、
+// 擬似のもの: 画面の切り替え、「AI に〜させる」ボタン（2秒待って用意済みの文書を見せるだけ）、
 //             CI の結果の ✓、QA のコメントのコピー。AI は呼びません。
 // 本物のもの: 「画面で確かめる」の「買った品を消す」。アプリと同じ src/listStore.js を読み込んで使います。
 //             機能の PR をマージする前の main には clearBought が無いので、行は消えません。
@@ -11,18 +11,17 @@ import * as store from '../src/listStore.js';
 
 const AI_WAIT_MS = 2000;
 
-// --- タブ ---------------------------------------------------------------
+// --- 画面の切り替え（工程の帯の 1・2・5 を押す） --------------------------
 
-const tabs = [...document.querySelectorAll('.tab')];
 const processSteps = [...document.querySelectorAll('.process__step')];
+const screens = processSteps
+  .filter((step) => step.dataset.screen)
+  .map((step) => step.dataset.screen);
 
 function showScreen(name) {
-  const known = tabs.some((tab) => tab.dataset.screen === name);
-  const target = known ? name : 'crm';
-  for (const tab of tabs) {
-    const selected = tab.dataset.screen === target;
-    tab.setAttribute('aria-selected', String(selected));
-    document.getElementById(`screen-${tab.dataset.screen}`).hidden = !selected;
+  const target = screens.includes(name) ? name : 'crm';
+  for (const screen of screens) {
+    document.getElementById(`screen-${screen}`).hidden = screen !== target;
   }
   for (const step of processSteps) {
     if (step.dataset.screen === target) {
@@ -33,11 +32,6 @@ function showScreen(name) {
   }
 }
 
-for (const tab of tabs) {
-  tab.addEventListener('click', () => {
-    window.location.hash = tab.dataset.screen;
-  });
-}
 window.addEventListener('hashchange', () => showScreen(window.location.hash.slice(1)));
 showScreen(window.location.hash.slice(1));
 

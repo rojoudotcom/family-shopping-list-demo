@@ -13,74 +13,80 @@
       「AI に〜させる」ボタンは、2秒待ってから用意しておいた文書を見せるだけです。
       本物の動きは「QA の確認」の「画面で確かめる」だけで、../src/listStore.js の addItem を使います。
     -->
-    <header class="site-header">
-      <p class="app-name">
-        家族の買い物リスト　社内の管理画面<span class="mock-note">（デモ用のモックアップ）</span>
-      </p>
-      <nav class="tabs" role="tablist" aria-label="画面の切り替え">
-        <button type="button" class="tab" role="tab" id="tab-crm" data-screen="crm">
-          顧客管理（CRM）<small>営業担当者</small>
-        </button>
-        <button type="button" class="tab" role="tab" id="tab-prd" data-screen="prd">
-          PRD<small>企画担当者</small>
-        </button>
-        <button type="button" class="tab" role="tab" id="tab-qa" data-screen="qa">
-          QA の確認<small>QA</small>
-        </button>
-      </nav>
-    </header>
+    <div class="sticky-top">
+      <header class="site-header">
+        <p class="app-name">
+          家族の買い物リスト　社内の管理画面<span class="mock-note">（デモ用のモックアップ）</span>
+        </p>
+      </header>
 
-    <!-- デモの作業プロセスと担当者。いま開いているタブの工程に色が付く（mock/app.js の showScreen） -->
-    <nav class="process" aria-label="デモの作業プロセスと担当者">
-      <ol>
-        <li class="process__step" data-screen="crm">
-          <span class="process__no">1</span>
-          <span class="process__body">
-            <span class="process__role">営業担当者</span>
-            <span class="process__work">議事録・お客さんの声</span>
-          </span>
-        </li>
-        <li class="process__step" data-screen="prd">
-          <span class="process__no">2</span>
-          <span class="process__body">
-            <span class="process__role">企画担当者</span>
-            <span class="process__work">PRD（Issue）</span>
-          </span>
-        </li>
-        <li class="process__step">
-          <span class="process__no">3</span>
-          <span class="process__body">
-            <span class="process__role">エンジニア＋Copilot</span>
-            <span class="process__work">要件定義書・設計書・チケット</span>
-          </span>
-        </li>
-        <li class="process__step">
-          <span class="process__no">4</span>
-          <span class="process__body">
-            <span class="process__role">Copilot＋エンジニア</span>
-            <span class="process__work">開発・PR・CI・レビュー</span>
-          </span>
-        </li>
-        <li class="process__step" data-screen="qa">
-          <span class="process__no">5</span>
-          <span class="process__body">
-            <span class="process__role">QA</span>
-            <span class="process__work">受け入れ条件の確認</span>
-          </span>
-        </li>
-        <li class="process__step">
-          <span class="process__no">6</span>
-          <span class="process__body">
-            <span class="process__role">エンジニア</span>
-            <span class="process__work">マージ・公開</span>
-          </span>
-        </li>
-      </ol>
-    </nav>
+      <!-- デモの作業プロセスと担当者。1・2・5 を押すと画面が切り替わり、いまの工程に色が付く（mock/app.js の showScreen）。3・4・6 は VS Code と GitHub で見せる -->
+      <nav class="process" aria-label="デモの作業プロセスと担当者">
+        <ol>
+          <li class="process__step" data-screen="crm">
+            <a class="process__link" href="#crm">
+              <span class="process__no">1</span>
+              <span class="process__body">
+                <span class="process__role">営業担当者</span>
+                <span class="process__work">議事録・お客さんの声</span>
+              </span></a
+            >
+          </li>
+          <li class="process__step" data-screen="prd">
+            <a class="process__link" href="#prd">
+              <span class="process__no">2</span>
+              <span class="process__body">
+                <span class="process__role">企画担当者</span>
+                <span class="process__work">PRD（Issue）</span>
+              </span></a
+            >
+          </li>
+          <li
+            class="process__step process__step--elsewhere"
+            title="VS Code と GitHub の画面で見せます"
+          >
+            <span class="process__no">3</span>
+            <span class="process__body">
+              <span class="process__role">エンジニア＋Copilot</span>
+              <span class="process__work">要件定義書・設計書・チケット</span>
+            </span>
+          </li>
+          <li
+            class="process__step process__step--elsewhere"
+            title="VS Code と GitHub の画面で見せます"
+          >
+            <span class="process__no">4</span>
+            <span class="process__body">
+              <span class="process__role">Copilot＋エンジニア</span>
+              <span class="process__work">開発・PR・CI・レビュー</span>
+            </span>
+          </li>
+          <li class="process__step" data-screen="qa">
+            <a class="process__link" href="#qa">
+              <span class="process__no">5</span>
+              <span class="process__body">
+                <span class="process__role">QA</span>
+                <span class="process__work">受け入れ条件の確認</span>
+              </span></a
+            >
+          </li>
+          <li
+            class="process__step process__step--elsewhere"
+            title="VS Code と GitHub の画面で見せます"
+          >
+            <span class="process__no">6</span>
+            <span class="process__body">
+              <span class="process__role">エンジニア</span>
+              <span class="process__work">マージ・公開</span>
+            </span>
+          </li>
+        </ol>
+      </nav>
+    </div>
 
     <main>
       <!-- ① 顧客管理（CRM）：営業担当者の画面 -->
-      <section class="screen" id="screen-crm" role="tabpanel" aria-labelledby="tab-crm">
+      <section class="screen" id="screen-crm" aria-label="顧客管理（CRM）">
         <!-- 出典：docs/customer/利用者プロフィール.md（人物はすべて仮名）。問い合わせ5件は、下のお客さんの声1〜5に登録済み -->
         <section class="card family">
           <p class="family__label">お客さんのページ</p>
@@ -279,7 +285,7 @@
       </section>
 
       <!-- ② PRD：企画担当者の画面 -->
-      <section class="screen" id="screen-prd" role="tabpanel" aria-labelledby="tab-prd" hidden>
+      <section class="screen" id="screen-prd" aria-label="PRD" hidden>
         <div class="columns columns--wide-left">
           <section class="card">
             <h2>PRD：買った品をまとめて消す</h2>
@@ -360,7 +366,7 @@
       </section>
 
       <!-- ③ QA の確認：QA の画面 -->
-      <section class="screen" id="screen-qa" role="tabpanel" aria-labelledby="tab-qa" hidden>
+      <section class="screen" id="screen-qa" aria-label="QA の確認" hidden>
         <section class="card">
           <h2>受け入れ条件の確認（PRD：Issue #8）</h2>
           <table class="table table--qa">
