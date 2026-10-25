@@ -381,6 +381,69 @@ p {
   }
 }
 
+/* --- 録音と文字起こしのアップロード（擬似） --- */
+
+.upload {
+  margin: 0.75rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.upload__title {
+  margin: 0 0 0.4rem;
+  font-weight: 700;
+}
+
+.upload__drop {
+  margin: 0 0 0.6rem;
+  padding: 0.75rem;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.upload__result[hidden] {
+  display: none;
+}
+
+.upload__files {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.5rem 0;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.upload__files .tag {
+  margin: 0 0.5rem 0 0;
+}
+
+.upload__preview {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.actions[hidden] {
+  display: none;
+}
+
+.registered {
+  color: #3fb950;
+  font-weight: 700;
+}
+
+.table tr[hidden] {
+  display: none;
+}
+
 /* --- 文書（議事録・PRD） --- */
 
 .doc {
