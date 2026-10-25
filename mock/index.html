@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>社内の管理画面（モックアップ）</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!--
+      研修のデモ用のモックアップです。データベースも AI の呼び出しもありません。
+      「AI に〜させる」ボタンは、2秒待ってから用意しておいた文書を見せるだけです。
+      本物の動きは「QA の確認」の「画面で確かめる」だけで、../src/listStore.js の addItem を使います。
+    -->
+    <header class="site-header">
+      <p class="app-name">
+        家族の買い物リスト　社内の管理画面<span class="mock-note">（デモ用のモックアップ）</span>
+      </p>
+      <nav class="tabs" role="tablist" aria-label="画面の切り替え">
+        <button type="button" class="tab" role="tab" id="tab-crm" data-screen="crm">
+          顧客管理（CRM）<small>営業・サポート担当者</small>
+        </button>
+        <button type="button" class="tab" role="tab" id="tab-prd" data-screen="prd">
+          PRD<small>企画担当者</small>
+        </button>
+        <button type="button" class="tab" role="tab" id="tab-qa" data-screen="qa">
+          QA の確認<small>QA</small>
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ① 顧客管理（CRM）：営業・サポート担当者の画面 -->
+      <section class="screen" id="screen-crm" role="tabpanel" aria-labelledby="tab-crm">
+        <div class="columns">
+          <div class="stack">
+            <section class="card">
+              <h2>お客さん</h2>
+              <!-- 出典：docs/customer/利用者プロフィール.md（人物はすべて仮名） -->
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>家族</th>
+                    <th>使っている端末</th>
+                    <th>利用開始</th>
+                    <th>問い合わせ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="is-selected">
+                    <td><strong>Aさん（夫）・Bさん（妻）</strong>・Cさん（子）</td>
+                    <td>台所の共用タブレット1台</td>
+                    <td class="nowrap">2026年8月</td>
+                    <td class="nowrap">5件</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+
+            <section class="card">
+              <h2>問い合わせ（5件）</h2>
+              <!-- 出典：docs/customer/問い合わせ記録.md -->
+              <ol class="timeline">
+                <li>
+                  <p class="timeline__meta">
+                    09-08・フォーム・Bさん<span class="tag tag--warn">同じ品が2行になる</span>
+                  </p>
+                  <p>牛乳が2行あって、片方にだけチェックが付いていました。</p>
+                </li>
+                <li>
+                  <p class="timeline__meta">
+                    09-16・メール・Aさん<span class="tag">文字の見やすさ</span>
+                  </p>
+                  <p>文字が小さくて、台所から少し離れると読めません。</p>
+                </li>
+                <li>
+                  <p class="timeline__meta">
+                    09-24・フォーム・Aさん<span class="tag tag--warn">同じ品が2行になる</span>
+                  </p>
+                  <p>リストに Milk と milk が並んでいます。どちらも同じ牛乳です。</p>
+                </li>
+                <li>
+                  <p class="timeline__meta">
+                    09-30・メール・Bさん<span class="tag">家族での共有</span>
+                  </p>
+                  <p>家族のスマホでも同じリストを見られるようにしてほしいです。</p>
+                </li>
+                <li>
+                  <p class="timeline__meta">
+                    10-02・電話・Bさん<span class="tag tag--warn">同じ品が2行になる</span>
+                  </p>
+                  <p>また2回買いが起きました。一度話を聞いてもらえませんか。</p>
+                </li>
+              </ol>
+            </section>
+          </div>
+
+          <section class="card">
+            <h2>ヒアリング2回目（2026-10-19）</h2>
+            <ol class="steps">
+              <li class="step">
+                <span class="step__name">録音</span>
+                <span class="badge badge--done">作成済み</span>
+              </li>
+              <li class="step">
+                <span class="step__name">文字起こし</span>
+                <span class="badge badge--done">作成済み</span>
+                <span class="badge badge--ai">AI が作成</span>
+              </li>
+              <li class="step">
+                <span class="step__name">議事録</span>
+                <span class="badge badge--done">作成済み</span>
+                <span class="badge badge--ai">AI が作成</span>
+              </li>
+            </ol>
+
+            <div class="actions">
+              <button type="button" class="button" id="minutes-button">
+                AI に議事録を作らせる
+              </button>
+              <span class="working" id="minutes-working" hidden>AI が書いています…</span>
+            </div>
+
+            <!-- 出典：docs/minutes/2026-10-19_ヒアリング2回目.md（要点を抜粋） -->
+            <article class="doc" id="minutes-doc" hidden>
+              <p class="doc__head">
+                議事録：ヒアリング2回目<span class="badge badge--ai">AI が作成</span>
+              </p>
+              <p><strong>出席者</strong>　Aさん、Bさん（家族）／サポート担当者</p>
+              <h3>決まったこと</h3>
+              <ul>
+                <li>
+                  大文字と小文字の違い、前後の空白だけが違う品は、同じ品として1行にまとめる。
+                  <span class="muted"
+                    >理由：Aさんは英字のまま打っても困らず、Bさんは音声入力をやめずに済むため。</span
+                  >
+                </li>
+                <li>
+                  チェック済みの品をまた足したときは、前からある行を、まだ買っていない状態に戻す。
+                </li>
+                <li>
+                  スマホでの共有は次の段階とする。
+                  <span class="muted"
+                    >理由：AさんもBさんも、まず2回買いがなくなれば十分としたため。</span
+                  >
+                </li>
+              </ul>
+              <h3>決まっていないこと</h3>
+              <ul>
+                <li>買った品の見せ方：隠す（Bさん）か、末尾に残す（Aさん）か。次回相談する。</li>
+              </ul>
+            </article>
+          </section>
+        </div>
+
+        <section class="card">
+          <h2>お客さんの声（6件）</h2>
+          <!-- 出典：docs/crm/お客さんの声.json（1〜5）と、ヒアリング2回目の文字起こし（6） -->
+          <table class="table">
+            <thead>
+              <tr>
+                <th>番号</th>
+                <th>日付</th>
+                <th>お客さん</th>
+                <th>経路</th>
+                <th>分類</th>
+                <th>そのままの言葉</th>
+                <th>対応の状況</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>09-08</td>
+                <td>Bさん</td>
+                <td>フォーム</td>
+                <td>同じ品が2行になる</td>
+                <td>「同じものは1行にまとまりませんか。」</td>
+                <td>開発チームへ共有</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>09-16</td>
+                <td>Aさん</td>
+                <td>メール</td>
+                <td>文字の見やすさ</td>
+                <td>「文字が小さくて、台所から少し離れると読めません。」</td>
+                <td>回答済み</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>09-24</td>
+                <td>Aさん</td>
+                <td>フォーム</td>
+                <td>同じ品が2行になる</td>
+                <td>「リストに Milk と milk が並んでいます。どちらも同じ牛乳です。」</td>
+                <td>開発チームへ共有</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>09-30</td>
+                <td>Bさん</td>
+                <td>メール</td>
+                <td>家族での共有</td>
+                <td>「家族のスマホでも同じリストを見られるようにしてほしいです。」</td>
+                <td>要望として記録</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>10-02</td>
+                <td>Bさん</td>
+                <td>電話</td>
+                <td>同じ品が2行になる</td>
+                <td>「また2回買いが起きました。」</td>
+                <td>対応中</td>
+              </tr>
+              <tr class="is-new">
+                <td>6</td>
+                <td>10-19</td>
+                <td>Aさん・Bさん</td>
+                <td>ヒアリング<span class="badge badge--ai">AI が作成</span></td>
+                <td>同じ品が2行になる</td>
+                <td>
+                  「はい。それなら、私が英字のまま打っても困りません。」（Aさん）<br />
+                  「私も、音声入力をやめずに済むので助かります。」（Bさん）
+                </td>
+                <td>PRD へ</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+
+      <!-- ② PRD：企画担当者の画面 -->
+      <section class="screen" id="screen-prd" role="tabpanel" aria-labelledby="tab-prd" hidden>
+        <div class="columns columns--wide-left">
+          <section class="card">
+            <h2>PRD：同じ名前の品を足しても、行が増えない</h2>
+            <p class="status">
+              <a
+                href="https://github.com/rojoudotcom/family-shopping-list-demo/issues/8"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub の Issue #8 に登録済み・かんばん：Todo</a
+              >
+            </p>
+
+            <div class="actions">
+              <button type="button" class="button" id="prd-button">AI に下書きさせる</button>
+              <span class="working" id="prd-working" hidden>AI が書いています…</span>
+            </div>
+
+            <article class="doc" id="prd-doc" hidden>
+              <p class="doc__head">PRD の下書き<span class="badge badge--ai">AI が作成</span></p>
+
+              <h3>なぜ作るのか</h3>
+              <p>
+                同じ品が2行になり、片方にだけチェックが付く。残った行を見て、同じ物を2回買ってしまう。
+                問い合わせ5件のうち3件がこの困りごとで、2回目のヒアリングでも、2週間で牛乳が2回、卵が1回、2行になった。
+              </p>
+
+              <h3>誰のためか</h3>
+              <p>
+                Aさん（夫）として、英字のまま品名を打っても、同じ品が2行にならないようにしたい。それは、2回買うのを防ぐためだ。<br />
+                Bさん（妻）として、音声入力で品を足しても、同じ品が2行にならないようにしたい。それは、音声入力をやめずに済むためだ。
+              </p>
+
+              <h3>何を作るのか</h3>
+              <ul>
+                <li>
+                  同じ名前の品を足しても、行が増えない（大文字・小文字と前後の空白の違いは同じ品として扱う）。
+                </li>
+              </ul>
+              <p class="subhead">やらないこと</p>
+              <ul>
+                <li>家族の端末どうしの共有</li>
+                <li>チェック済みの品を足したときに、まだ買っていない状態に戻す動き</li>
+                <li>買った品を末尾へ移す</li>
+              </ul>
+
+              <h3>受け入れ条件</h3>
+              <ul class="ac-list">
+                <li><span class="ac-id">AC-01</span>同じ名前を足すと行が増えない</li>
+                <li>
+                  <span class="ac-id">AC-02</span
+                  >「Milk」と「milk」、前後の空白だけが違う名前も同じ品になる
+                </li>
+                <li><span class="ac-id">AC-03</span>違う名前は別の行になる</li>
+              </ul>
+
+              <h3>決まっていないこと</h3>
+              <p>今のところ、ありません。</p>
+            </article>
+          </section>
+
+          <div class="stack">
+            <section class="card">
+              <h2>元にした資料</h2>
+              <ul class="sources">
+                <li>議事録：ヒアリング1回目（2026-10-05）</li>
+                <li>議事録：ヒアリング2回目（2026-10-19）</li>
+                <li>顧客管理：お客さんの声（6件）</li>
+              </ul>
+            </section>
+
+            <section class="card">
+              <h2>次に作るものを投票で決める</h2>
+              <p class="muted">Zoom の投票の結果を選びます（擬似）。</p>
+              <div class="poll" role="group" aria-label="次に作るものの候補">
+                <button type="button" class="poll__option" aria-pressed="false">
+                  買った品を末尾へ移す
+                </button>
+                <button type="button" class="poll__option" aria-pressed="false">
+                  チェック済みの品を足したら戻す
+                </button>
+                <button type="button" class="poll__option" aria-pressed="false">
+                  家族の端末で共有する
+                </button>
+              </div>
+              <p class="poll__result" id="poll-result" aria-live="polite"></p>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- ③ QA の確認：QA の画面 -->
+      <section class="screen" id="screen-qa" role="tabpanel" aria-labelledby="tab-qa" hidden>
+        <section class="card">
+          <h2>受け入れ条件の確認（PRD：Issue #8）</h2>
+          <table class="table table--qa">
+            <thead>
+              <tr>
+                <th>条件</th>
+                <th>前提</th>
+                <th>操作</th>
+                <th>結果</th>
+                <th>テスト（CI の結果・擬似）</th>
+                <th>画面で確かめる</th>
+                <th>確認した</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="ac-id">AC-01</span></td>
+                <td>「牛乳」がある</td>
+                <td>「牛乳」を足す</td>
+                <td>行は1つのまま</td>
+                <td><span class="pass">✓</span> AC-01 同じ名前を足すと行が増えない</td>
+                <td>
+                  <button type="button" class="button button--small" data-ac="AC-01">
+                    この条件で試す
+                  </button>
+                </td>
+                <td><input type="checkbox" class="qa-check" aria-label="AC-01 を確認した" /></td>
+              </tr>
+              <tr>
+                <td><span class="ac-id">AC-02</span></td>
+                <td>「milk」がある</td>
+                <td>「Milk」や「 milk 」を足す</td>
+                <td>行は1つのまま</td>
+                <td>
+                  <span class="pass">✓</span> AC-02
+                  大文字・小文字と前後の空白だけが違う名前は同じ品になる
+                </td>
+                <td>
+                  <button type="button" class="button button--small" data-ac="AC-02">
+                    この条件で試す
+                  </button>
+                </td>
+                <td><input type="checkbox" class="qa-check" aria-label="AC-02 を確認した" /></td>
+              </tr>
+              <tr>
+                <td><span class="ac-id">AC-03</span></td>
+                <td>「牛乳」がある</td>
+                <td>「卵」を足す</td>
+                <td>行が2つになる</td>
+                <td><span class="pass">✓</span> AC-03 違う名前は別の行になる</td>
+                <td>
+                  <button type="button" class="button button--small" data-ac="AC-03">
+                    この条件で試す
+                  </button>
+                </td>
+                <td><input type="checkbox" class="qa-check" aria-label="AC-03 を確認した" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <div class="columns">
+          <section class="card">
+            <h2>画面で確かめる</h2>
+            <p class="muted">
+              ここだけは本物です。アプリと同じ addItem（src/listStore.js）で行を足します。<br />
+              マージ前は main の動き、マージ後は新しい動きになります。
+            </p>
+            <p class="engine" id="engine-state"></p>
+
+            <form class="try-form" id="try-form" novalidate>
+              <input
+                id="try-input"
+                class="try-form__input"
+                type="text"
+                autocomplete="off"
+                placeholder="品名を入力（例: Milk）"
+                aria-label="足す品名"
+              />
+              <button type="submit" class="button">追加</button>
+              <button type="button" class="button button--ghost" id="try-reset">空にする</button>
+            </form>
+            <p class="try-error" id="try-error" role="alert"></p>
+
+            <p class="try-goal" id="try-goal"></p>
+            <p class="try-count" id="try-count" aria-live="polite"></p>
+            <ul class="try-list" id="try-list" aria-label="試しているリスト"></ul>
+          </section>
+
+          <section class="card">
+            <h2>QA のコメント</h2>
+            <p class="muted">PR に貼るコメントです。ボタンでクリップボードに写します。</p>
+            <textarea id="qa-comment" class="comment" rows="3" readonly>
+AC-01〜03 を受け入れ条件どおりに確認しました（QA）</textarea>
+            <div class="actions">
+              <button type="button" class="button" id="qa-copy">QA のコメントを書く</button>
+              <span class="copied" id="qa-copied" aria-live="polite"></span>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

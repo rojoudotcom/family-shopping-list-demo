@@ -21,7 +21,11 @@ const server = createServer(async (req, res) => {
   // クエリ文字列を取り除き、ROOT より上の階層への遡り（パストラバーサル）を防ぐ。
   const requestPath = decodeURIComponent((req.url || '/').split('?')[0]);
   const relativePath = normalize(requestPath).replace(/^(\.\.[/\\])+/, '');
-  const filePath = join(ROOT, relativePath === '/' ? 'index.html' : relativePath);
+  // 末尾が「/」のパス（/ や /mock/）は、そのフォルダの index.html を返す。
+  const filePath = join(
+    ROOT,
+    relativePath.endsWith('/') ? `${relativePath}index.html` : relativePath,
+  );
 
   try {
     const body = await readFile(filePath);
@@ -29,7 +33,15 @@ const server = createServer(async (req, res) => {
       'Content-Type': MIME_TYPES[extname(filePath)] || 'application/octet-stream',
     });
     res.end(body);
-  } catch {
+  } catch (error) {
+    // フォルダを「/」なしで開いたとき（/mock など）は、「/」付きの URL へ送り直す。
+    if (error.code === 'EISDIR') {
+      // 先頭の「/」は1つにそろえ、別のサイトへの送り直し（//example.com）にならないようにする。
+      const location = encodeURI(`/${relativePath.replace(/^[/\\]+/, '')}/`);
+      res.writeHead(301, { Location: location });
+      res.end();
+      return;
+    }
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('404 Not Found');
   }
