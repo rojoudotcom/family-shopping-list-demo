@@ -88,4 +88,21 @@ export default [
       'no-undef': 'error',
     },
   },
+  {
+    // 社内の管理画面のモックアップ（ブラウザで動く。研修のデモ用）。
+    files: ['mock/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2023,
+      sourceType: 'module',
+      globals: {
+        document: 'readonly',
+        window: 'readonly',
+        setTimeout: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': 'error',
+      'no-undef': 'error',
+    },
+  },
 ];
