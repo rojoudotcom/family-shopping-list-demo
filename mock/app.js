@@ -86,13 +86,13 @@ uploadButton.addEventListener('click', () => {
 });
 
 // --- 顧客管理への登録（擬似） ---------------------------------------------
-// 議事録から整えたお客さんの声（6件目）を、表に足して見せる。
+// 議事録から整えたお客さんの声（7件目）を、表に足して見せる。
 
 document.getElementById('register-button').addEventListener('click', (event) => {
   const newRow = document.getElementById('voice-new');
   newRow.hidden = false;
-  document.getElementById('voice-count').textContent = '6';
-  document.getElementById('register-done').textContent = 'お客さんの声の6件目として登録しました';
+  document.getElementById('voice-count').textContent = '7';
+  document.getElementById('register-done').textContent = 'お客さんの声の7件目として登録しました';
   event.currentTarget.hidden = true;
   newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
