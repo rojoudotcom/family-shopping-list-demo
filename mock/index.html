@@ -105,142 +105,114 @@
           <p class="family__meta">台所の共用タブレット1台・2026年8月から利用</p>
         </section>
 
-        <div class="columns columns--hearings">
-          <!-- 出典：docs/minutes/2026-10-05_ヒアリング1回目.md（要点を抜粋） -->
-          <section class="card">
-            <h2>
-              ヒアリング1回目（2026-10-05）<span class="badge badge--done">議事録 保存済み</span>
-            </h2>
-            <p><strong>出席者</strong>　Aさん、Bさん（家族）／営業担当者</p>
-            <h3>話したこと</h3>
+        <section class="card">
+          <h2>ヒアリング2回目（2026-10-19）</h2>
+
+          <div class="actions">
+            <button type="button" class="button" id="agenda-button">
+              AI にアジェンダを作らせる
+            </button>
+            <span class="working" id="agenda-working" hidden>AI が書いています…</span>
+          </div>
+
+          <!-- 出典：docs/hearing/2026-10-24_アジェンダ.md（要点を抜粋） -->
+          <article class="doc" id="agenda-doc" hidden>
+            <p class="doc__head">
+              アジェンダ：ヒアリング2回目<span class="badge badge--ai">AI が作成</span>
+            </p>
+            <p>
+              <strong>元にした資料</strong
+              >　お客さんの情報、お客さんの声6件（問い合わせ5件とヒアリング1回目）
+            </p>
+            <h3>今日の目的</h3>
+            <p>チェック済みの行をまとめて片付ける方向で、家族の場面に抜けがないかを確かめる。</p>
+            <h3>聞くこと</h3>
             <ul>
-              <li>
-                Aさんが卵を買い忘れた。「卵の行はあったのですが、チェック済みの行の間に挟まっていて、見落としました」
-              </li>
-              <li>Bさん「12行あったときは、12回押しました。毎週は続きません」</li>
+              <li>チェック済みの行は、何行たまっていたか。どうやって消したか</li>
+              <li>まだ買っていない品が、チェック済みの行に埋もれて見落とした場面</li>
+              <li>買った品を、買ったあとどうしたいか（Bさんは消したい、Aさんは見返したい）</li>
             </ul>
+          </article>
+
+          <!-- 録音と文字起こしのアップロード（擬似）。ファイルは audio/ と docs/hearing/ に用意してある -->
+          <div class="upload">
+            <p class="upload__title">打ち合わせの録音と文字起こし</p>
+            <p class="upload__drop">
+              ここにファイルを置いてアップロード（デモでは、用意したファイルを使います）
+            </p>
+            <div class="actions">
+              <button type="button" class="button" id="upload-button">
+                録音と文字起こしをアップロードする
+              </button>
+              <span class="working" id="upload-working" hidden>アップロードしています…</span>
+            </div>
+            <div class="upload__result" id="upload-result" hidden>
+              <ul class="upload__files">
+                <li>
+                  <span class="tag">録音</span>2026-10-19_ヒアリング2回目.m4a<span
+                    class="badge badge--done"
+                    >アップロード済み</span
+                  >
+                </li>
+                <li>
+                  <span class="tag">文字起こし</span>2026-10-19_ヒアリング2回目_文字起こし.txt<span
+                    class="badge badge--done"
+                    >アップロード済み</span
+                  >
+                </li>
+              </ul>
+              <!-- 出典：docs/hearing/2026-10-19_ヒアリング2回目_文字起こし.txt（4〜5行目） -->
+              <blockquote class="upload__preview">
+                Bさん：1行ずつ「削除」を押しました。12行あったときは12回押して、途中で嫌になりました。<br />
+                Aさん：私は消さずに、そのままにしていました。その週は、まだ買っていない卵がチェック済みの行の間に埋もれていて、見落として買い忘れました。
+              </blockquote>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="button" id="minutes-button" disabled>
+              AI に議事録を作らせる
+            </button>
+            <span class="working" id="minutes-working" hidden>AI が書いています…</span>
+          </div>
+
+          <!-- 出典：docs/minutes/2026-10-19_ヒアリング2回目.md（要点を抜粋） -->
+          <article class="doc" id="minutes-doc" hidden>
+            <p class="doc__head">
+              議事録：ヒアリング2回目<span class="badge badge--ai">AI が作成</span>
+            </p>
+            <p><strong>出席者</strong>　Aさん、Bさん（家族）／営業担当者</p>
             <h3>決まったこと</h3>
             <ul>
-              <li>最初に取り組むのは、チェック済みの行を片付けやすくすること</li>
-              <li>スマホでの共有は次の段階とする</li>
-            </ul>
-            <h3>宿題</h3>
-            <ul>
               <li>
-                営業担当者：片付け方の案を3つ用意する（ボタンでまとめて消す／末尾へ移す／一覧から隠す）
+                「買った品を消す」ボタンを1つ足し、押したときに、チェック済みの行をまとめて消す。押すまでは残す。
+                <span class="muted"
+                  >理由：Bさんは12回押さずに1回で済み、Aさんは見返してから押せば困らないため。</span
+                >
+              </li>
+              <li>まだ買っていない行は消さずに、今の順番のまま残す。</li>
+              <li>
+                スマホでの共有は次の段階とする。
+                <span class="muted"
+                  >理由：AさんもBさんも、まず買い忘れがなくなれば十分としたため。</span
+                >
               </li>
             </ul>
-          </section>
+            <h3>決まっていないこと</h3>
+            <ul>
+              <li>消す前に確かめる画面と、元に戻す操作。次の段階で相談する。</li>
+            </ul>
+          </article>
 
-          <section class="card">
-            <h2>ヒアリング2回目（2026-10-19）</h2>
-
-            <div class="actions">
-              <button type="button" class="button" id="agenda-button">
-                AI にアジェンダを作らせる
-              </button>
-              <span class="working" id="agenda-working" hidden>AI が書いています…</span>
-            </div>
-
-            <!-- 出典：docs/hearing/2026-10-24_アジェンダ.md（要点を抜粋） -->
-            <article class="doc" id="agenda-doc" hidden>
-              <p class="doc__head">
-                アジェンダ：ヒアリング2回目<span class="badge badge--ai">AI が作成</span>
-              </p>
-              <p>
-                <strong>元にした資料</strong
-                >　お客さんの情報、お客さんの声5件（問い合わせの記録）、ヒアリング1回目の議事録
-              </p>
-              <h3>今日の目的</h3>
-              <p>チェック済みの行をまとめて片付ける方向で、家族の場面に抜けがないかを確かめる。</p>
-              <h3>聞くこと</h3>
-              <ul>
-                <li>チェック済みの行は、何行たまっていたか。どうやって消したか</li>
-                <li>まだ買っていない品が、チェック済みの行に埋もれて見落とした場面</li>
-                <li>買った品を、買ったあとどうしたいか（Bさんは消したい、Aさんは見返したい）</li>
-              </ul>
-            </article>
-
-            <!-- 録音と文字起こしのアップロード（擬似）。ファイルは audio/ と docs/hearing/ に用意してある -->
-            <div class="upload">
-              <p class="upload__title">打ち合わせの録音と文字起こし</p>
-              <p class="upload__drop">
-                ここにファイルを置いてアップロード（デモでは、用意したファイルを使います）
-              </p>
-              <div class="actions">
-                <button type="button" class="button" id="upload-button">
-                  録音と文字起こしをアップロードする
-                </button>
-                <span class="working" id="upload-working" hidden>アップロードしています…</span>
-              </div>
-              <div class="upload__result" id="upload-result" hidden>
-                <ul class="upload__files">
-                  <li>
-                    <span class="tag">録音</span>2026-10-19_ヒアリング2回目.m4a<span
-                      class="badge badge--done"
-                      >アップロード済み</span
-                    >
-                  </li>
-                  <li>
-                    <span class="tag">文字起こし</span
-                    >2026-10-19_ヒアリング2回目_文字起こし.txt<span class="badge badge--done"
-                      >アップロード済み</span
-                    >
-                  </li>
-                </ul>
-                <!-- 出典：docs/hearing/2026-10-19_ヒアリング2回目_文字起こし.txt（4〜5行目） -->
-                <blockquote class="upload__preview">
-                  Bさん：1行ずつ「削除」を押しました。12行あったときは12回押して、途中で嫌になりました。<br />
-                  Aさん：私は消さずに、そのままにしていました。その週は、まだ買っていない卵がチェック済みの行の間に埋もれていて、見落として買い忘れました。
-                </blockquote>
-              </div>
-            </div>
-
-            <div class="actions">
-              <button type="button" class="button" id="minutes-button" disabled>
-                AI に議事録を作らせる
-              </button>
-              <span class="working" id="minutes-working" hidden>AI が書いています…</span>
-            </div>
-
-            <!-- 出典：docs/minutes/2026-10-19_ヒアリング2回目.md（要点を抜粋） -->
-            <article class="doc" id="minutes-doc" hidden>
-              <p class="doc__head">
-                議事録：ヒアリング2回目<span class="badge badge--ai">AI が作成</span>
-              </p>
-              <p><strong>出席者</strong>　Aさん、Bさん（家族）／営業担当者</p>
-              <h3>決まったこと</h3>
-              <ul>
-                <li>
-                  「買った品を消す」ボタンを1つ足し、押したときに、チェック済みの行をまとめて消す。押すまでは残す。
-                  <span class="muted"
-                    >理由：Bさんは12回押さずに1回で済み、Aさんは見返してから押せば困らないため。</span
-                  >
-                </li>
-                <li>まだ買っていない行は消さずに、今の順番のまま残す。</li>
-                <li>
-                  スマホでの共有は次の段階とする。
-                  <span class="muted"
-                    >理由：AさんもBさんも、まず買い忘れがなくなれば十分としたため。</span
-                  >
-                </li>
-              </ul>
-              <h3>決まっていないこと</h3>
-              <ul>
-                <li>消す前に確かめる画面と、元に戻す操作。次の段階で相談する。</li>
-              </ul>
-            </article>
-
-            <div class="actions" id="register-actions" hidden>
-              <button type="button" class="button" id="register-button">顧客管理に登録する</button>
-              <span class="registered" id="register-done" aria-live="polite"></span>
-            </div>
-          </section>
-        </div>
+          <div class="actions" id="register-actions" hidden>
+            <button type="button" class="button" id="register-button">顧客管理に登録する</button>
+            <span class="registered" id="register-done" aria-live="polite"></span>
+          </div>
+        </section>
 
         <section class="card">
-          <h2>お客さんの声（<span id="voice-count">5</span>件）</h2>
-          <!-- 出典：docs/crm/お客さんの声.json（1〜5）と、ヒアリング2回目の文字起こし（6） -->
+          <h2>お客さんの声（<span id="voice-count">6</span>件）</h2>
+          <!-- 出典：docs/crm/お客さんの声.json（1〜6）と、ヒアリング2回目の文字起こし（7） -->
           <table class="table">
             <thead>
               <tr>
@@ -301,8 +273,20 @@
                 <td>「また買い忘れが起きました。」</td>
                 <td>対応中</td>
               </tr>
-              <tr class="is-new" id="voice-new" hidden>
+              <tr>
                 <td>6</td>
+                <td>10-05</td>
+                <td>Aさん・Bさん</td>
+                <td>ヒアリング</td>
+                <td>買った品の見せ方</td>
+                <td>
+                  「卵の行はあったのですが、チェック済みの行の間に挟まっていて、見落としました。」（Aさん）<br />
+                  「12行あったときは、12回押しました。毎週は続きません。」（Bさん）
+                </td>
+                <td>開発チームへ共有</td>
+              </tr>
+              <tr class="is-new" id="voice-new" hidden>
+                <td>7</td>
                 <td>10-19</td>
                 <td>Aさん・Bさん</td>
                 <td>ヒアリング<span class="badge badge--ai">AI が作成</span></td>
@@ -390,7 +374,7 @@
               <ul class="sources">
                 <li>議事録：ヒアリング1回目（2026-10-05）</li>
                 <li>議事録：ヒアリング2回目（2026-10-19）</li>
-                <li>顧客管理：お客さんの声（6件）</li>
+                <li>顧客管理：お客さんの声（7件）</li>
               </ul>
             </section>
           </div>
