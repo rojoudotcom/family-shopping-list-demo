@@ -115,7 +115,7 @@ form.addEventListener('submit', (event) => {
   event.preventDefault();
   let nextItems;
   try {
-    // 品名の検証（空白の除去・空文字の拒否）は addItem に任せる。
+    // 品名の検証と、同じ品物の重複防止は addItem に任せる。
     nextItems = addItem(items, input.value);
   } catch (error) {
     formError.textContent = error.message;

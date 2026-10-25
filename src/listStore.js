@@ -13,17 +13,28 @@ export const FILTERS = Object.freeze({
   BOUGHT: 'bought',
 });
 
+function normalizeName(name) {
+  return String(name ?? '')
+    .trim()
+    .toLowerCase();
+}
+
 /**
- * 品物を1件追加する。品名は前後の空白を除去し、空文字なら拒否する。
+ * 品物を1件追加する。品名は前後の空白を除去し、同じ品物があれば行を増やさない。
+ * 空文字なら拒否する。
  * 新しい id は「現在の最大 id + 1」。外部カウンターに頼らず一意性を保てる。
  * @param {Array} items
  * @param {string} name
- * @returns {Array} 品物を末尾に加えた新しい配列
+ * @returns {Array} 品物を末尾に加えるか、既存の行を保った新しい配列
  */
 export function addItem(items, name) {
   const trimmed = String(name ?? '').trim();
   if (!trimmed) {
     throw new Error('品名を入力してください');
+  }
+  const normalizedName = normalizeName(trimmed);
+  if (items.some((item) => normalizeName(item.name) === normalizedName)) {
+    return [...items];
   }
   const nextId = items.reduce((max, item) => Math.max(max, item.id), 0) + 1;
   return [...items, { id: nextId, name: trimmed, bought: false }];
