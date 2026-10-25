@@ -2,10 +2,12 @@
 //
 // 擬似のもの: タブの切り替え、「AI に〜させる」ボタン（2秒待って用意済みの文書を見せるだけ）、
 //             CI の結果の ✓、QA のコメントのコピー。AI は呼びません。
-// 本物のもの: 「画面で確かめる」の行の追加。アプリと同じ addItem を読み込んで使います。
-//             そのため、機能の PR をマージする前は main の動き（同じ名前でも行が増える）になります。
+// 本物のもの: 「画面で確かめる」の「買った品を消す」。アプリと同じ src/listStore.js を読み込んで使います。
+//             機能の PR をマージする前の main には clearBought が無いので、行は消えません。
 
-import { addItem } from '../src/listStore.js';
+// clearBought は機能の PR で足す関数です。マージ前の main に無くても画面が動くよう、
+// 名前を指定せずに読み込み、あるかどうかを確かめてから使います。
+import * as store from '../src/listStore.js';
 
 const AI_WAIT_MS = 2000;
 
@@ -55,38 +57,58 @@ pseudoAi('agenda-button', 'agenda-working', 'agenda-doc');
 pseudoAi('minutes-button', 'minutes-working', 'minutes-doc');
 pseudoAi('prd-button', 'prd-working', 'prd-doc');
 
-// --- 画面で確かめる（本物の addItem） --------------------------------------
+// --- 画面で確かめる（本物の clearBought） ---------------------------------
 
-// 受け入れ条件ごとの「前提」「足す名前」「期待する行の数」。
+// 受け入れ条件ごとの「前提の行」と「消したあとに残るはずの行」。
+// 前提の行は [品名, チェックが付いているか]。
 const AC_CASES = {
-  'AC-01': { start: ['牛乳'], input: '牛乳', expectedRows: 1 },
-  'AC-02': { start: ['milk'], input: 'Milk', expectedRows: 1 },
-  'AC-03': { start: ['牛乳'], input: '卵', expectedRows: 2 },
+  'AC-01': {
+    start: [
+      ['牛乳', false],
+      ['卵', true],
+      ['パン', true],
+    ],
+    expected: ['牛乳'],
+  },
+  'AC-02': {
+    start: [
+      ['牛乳', false],
+      ['卵', true],
+      ['パン', false],
+      ['りんご', false],
+    ],
+    expected: ['牛乳', 'パン', 'りんご'],
+  },
+  'AC-03': {
+    start: [
+      ['牛乳', false],
+      ['卵', false],
+    ],
+    expected: ['牛乳', '卵'],
+  },
 };
 
-const tryForm = document.getElementById('try-form');
-const tryInput = document.getElementById('try-input');
-const tryError = document.getElementById('try-error');
 const tryList = document.getElementById('try-list');
 const tryCount = document.getElementById('try-count');
 const tryGoal = document.getElementById('try-goal');
+const tryClear = document.getElementById('try-clear');
 const engineState = document.getElementById('engine-state');
+
+const hasClearBought = typeof store.clearBought === 'function';
 
 let items = [];
 let currentCase = null;
 
-function itemsFromNames(names) {
-  return names.reduce((list, name) => addItem(list, name), []);
+function itemsFromRows(rows) {
+  return rows.map(([name, bought], index) => ({ id: index + 1, name, bought }));
 }
 
-// いま読み込んでいる addItem が、マージ前と後のどちらの動きかを見分ける。
+// いま読み込んでいる src/listStore.js が、マージ前と後のどちらかを見分ける。
 function describeEngine() {
-  const rows = addItem([{ id: 1, name: 'milk', bought: false }], 'Milk').length;
-  engineState.textContent =
-    rows === 1
-      ? 'いまの addItem：新しい動き（同じ名前なら行が増えない）'
-      : 'いまの addItem：マージ前の main の動き（同じ名前でも行が増える）';
-  engineState.dataset.state = rows === 1 ? 'new' : 'old';
+  engineState.textContent = hasClearBought
+    ? 'いまのアプリ：新しい動き（チェックを付けた行をまとめて消せる）'
+    : 'いまのアプリ：マージ前の main の動き（まとめて消す機能はまだ無い）';
+  engineState.dataset.state = hasClearBought ? 'new' : 'old';
 }
 
 function render() {
@@ -94,69 +116,60 @@ function render() {
     ...items.map((item) => {
       const li = document.createElement('li');
       li.className = 'try-list__item';
-      li.textContent = `「${item.name}」`;
+      const label = document.createElement('label');
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+      box.checked = item.bought;
+      box.addEventListener('change', () => {
+        items = store.toggleBought(items, item.id);
+        render();
+      });
+      label.append(box, ` ${item.name}`);
+      li.append(label);
       return li;
     }),
   );
 
   if (!currentCase) {
-    tryGoal.textContent = '';
-    tryCount.textContent = `行の数：${items.length}`;
+    tryGoal.textContent = '「この条件で試す」を押すと、前提の行を用意します。';
+    tryCount.textContent = '';
     tryCount.dataset.verdict = '';
     return;
   }
-  const { id, expectedRows, added } = currentCase;
-  tryGoal.textContent = `${id}：前提の行を用意しました。入力欄の名前を「追加」してください。`;
-  if (!added) {
-    tryCount.textContent = `行の数：${items.length}`;
+  const { id, expected, pressed } = currentCase;
+  tryGoal.textContent = `${id}：前提の行を用意しました。「買った品を消す」を押してください。`;
+  if (!pressed) {
+    tryCount.textContent = '';
     tryCount.dataset.verdict = '';
     return;
   }
-  const ok = items.length === expectedRows;
-  tryCount.textContent = ok
-    ? `行の数：${items.length}（${id} の期待は ${expectedRows}）→ 期待どおり`
-    : `行の数：${items.length}（${id} の期待は ${expectedRows}）→ 期待と違う`;
+  const names = items.map((item) => item.name);
+  const ok = names.join('、') === expected.join('、');
+  tryCount.textContent = `残った行：${names.join('、') || 'なし'}（${id} の期待は ${expected.join('、')}）→ ${
+    ok ? '期待どおり' : '期待と違う'
+  }`;
   tryCount.dataset.verdict = ok ? 'ok' : 'ng';
 }
 
 function startCase(id) {
-  const testCase = AC_CASES[id];
-  items = itemsFromNames(testCase.start);
-  currentCase = { id, expectedRows: testCase.expectedRows, added: false };
-  tryInput.value = testCase.input;
-  tryError.textContent = '';
+  items = itemsFromRows(AC_CASES[id].start);
+  currentCase = { id, expected: AC_CASES[id].expected, pressed: false };
   render();
-  tryInput.focus();
+  tryClear.focus();
 }
 
 for (const button of document.querySelectorAll('[data-ac]')) {
   button.addEventListener('click', () => startCase(button.dataset.ac));
 }
 
-tryForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  try {
-    items = addItem(items, tryInput.value);
-  } catch (error) {
-    tryError.textContent = error.message;
-    return;
+tryClear.addEventListener('click', () => {
+  if (hasClearBought) {
+    items = store.clearBought(items);
   }
-  tryError.textContent = '';
-  tryInput.value = '';
   if (currentCase) {
-    currentCase.added = true;
+    currentCase.pressed = true;
   }
   render();
-  tryInput.focus();
-});
-
-document.getElementById('try-reset').addEventListener('click', () => {
-  items = [];
-  currentCase = null;
-  tryInput.value = '';
-  tryError.textContent = '';
-  render();
-  tryInput.focus();
 });
 
 describeEngine();

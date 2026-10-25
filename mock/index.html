@@ -64,9 +64,9 @@
               <ol class="timeline">
                 <li>
                   <p class="timeline__meta">
-                    09-08・フォーム・Bさん<span class="tag tag--warn">同じ品が2行になる</span>
+                    09-08・フォーム・Bさん<span class="tag tag--warn">買った品の見せ方</span>
                   </p>
-                  <p>牛乳が2行あって、片方にだけチェックが付いていました。</p>
+                  <p>チェックを付けた行が12行たまっていました。買った品をまとめて消せませんか。</p>
                 </li>
                 <li>
                   <p class="timeline__meta">
@@ -76,9 +76,9 @@
                 </li>
                 <li>
                   <p class="timeline__meta">
-                    09-24・フォーム・Aさん<span class="tag tag--warn">同じ品が2行になる</span>
+                    09-24・フォーム・Aさん<span class="tag tag--warn">買った品の見せ方</span>
                   </p>
-                  <p>リストに Milk と milk が並んでいます。どちらも同じ牛乳です。</p>
+                  <p>卵の行がチェック済みの行の間に挟まっていて、見落としました。</p>
                 </li>
                 <li>
                   <p class="timeline__meta">
@@ -88,9 +88,9 @@
                 </li>
                 <li>
                   <p class="timeline__meta">
-                    10-02・電話・Bさん<span class="tag tag--warn">同じ品が2行になる</span>
+                    10-02・電話・Bさん<span class="tag tag--warn">買った品の見せ方</span>
                   </p>
-                  <p>また2回買いが起きました。一度話を聞いてもらえませんか。</p>
+                  <p>また買い忘れが起きました。一度話を聞いてもらえませんか。</p>
                 </li>
               </ol>
             </section>
@@ -137,11 +137,11 @@
                 >　お客さんの情報、問い合わせ5件、ヒアリング1回目の議事録
               </p>
               <h3>今日の目的</h3>
-              <p>同じ品を1行にまとめる方向で、家族の場面に抜けがないかを確かめる。</p>
+              <p>チェック済みの行をまとめて片付ける方向で、家族の場面に抜けがないかを確かめる。</p>
               <h3>聞くこと</h3>
               <ul>
-                <li>「Milk」と「milk」、音声入力の「牛乳 」で、2行になった場面</li>
-                <li>店で、もうリストにある品かどうかを見分けたい場面</li>
+                <li>チェック済みの行は、何行たまっていたか。どうやって消したか</li>
+                <li>まだ買っていない品が、チェック済みの行に埋もれて見落とした場面</li>
                 <li>買った品を、買ったあとどうしたいか（Bさんは消したい、Aさんは見返したい）</li>
               </ul>
             </article>
@@ -162,24 +162,22 @@
               <h3>決まったこと</h3>
               <ul>
                 <li>
-                  大文字と小文字の違い、前後の空白だけが違う品は、同じ品として1行にまとめる。
+                  「買った品を消す」ボタンを1つ足し、押したときに、チェック済みの行をまとめて消す。押すまでは残す。
                   <span class="muted"
-                    >理由：Aさんは英字のまま打っても困らず、Bさんは音声入力をやめずに済むため。</span
+                    >理由：Bさんは12回押さずに1回で済み、Aさんは見返してから押せば困らないため。</span
                   >
                 </li>
-                <li>
-                  チェック済みの品をまた足したときは、前からある行を、まだ買っていない状態に戻す。
-                </li>
+                <li>まだ買っていない行は消さずに、今の順番のまま残す。</li>
                 <li>
                   スマホでの共有は次の段階とする。
                   <span class="muted"
-                    >理由：AさんもBさんも、まず2回買いがなくなれば十分としたため。</span
+                    >理由：AさんもBさんも、まず買い忘れがなくなれば十分としたため。</span
                   >
                 </li>
               </ul>
               <h3>決まっていないこと</h3>
               <ul>
-                <li>買った品の見せ方：隠す（Bさん）か、末尾に残す（Aさん）か。次回相談する。</li>
+                <li>消す前に確かめる画面と、元に戻す操作。次の段階で相談する。</li>
               </ul>
             </article>
           </section>
@@ -206,8 +204,8 @@
                 <td>09-08</td>
                 <td>Bさん</td>
                 <td>フォーム</td>
-                <td>同じ品が2行になる</td>
-                <td>「同じものは1行にまとまりませんか。」</td>
+                <td>買った品の見せ方</td>
+                <td>「買った品をまとめて消せませんか。」</td>
                 <td>開発チームへ共有</td>
               </tr>
               <tr>
@@ -224,8 +222,10 @@
                 <td>09-24</td>
                 <td>Aさん</td>
                 <td>フォーム</td>
-                <td>同じ品が2行になる</td>
-                <td>「リストに Milk と milk が並んでいます。どちらも同じ牛乳です。」</td>
+                <td>買った品の見せ方</td>
+                <td>
+                  「卵の行はリストにあったのですが、チェック済みの行の間に挟まっていて、見落としました。」
+                </td>
                 <td>開発チームへ共有</td>
               </tr>
               <tr>
@@ -242,8 +242,8 @@
                 <td>10-02</td>
                 <td>Bさん</td>
                 <td>電話</td>
-                <td>同じ品が2行になる</td>
-                <td>「また2回買いが起きました。」</td>
+                <td>買った品の見せ方</td>
+                <td>「また買い忘れが起きました。」</td>
                 <td>対応中</td>
               </tr>
               <tr class="is-new">
@@ -251,10 +251,10 @@
                 <td>10-19</td>
                 <td>Aさん・Bさん</td>
                 <td>ヒアリング<span class="badge badge--ai">AI が作成</span></td>
-                <td>同じ品が2行になる</td>
+                <td>買った品の見せ方</td>
                 <td>
-                  「はい。それなら、私が英字のまま打っても困りません。」（Aさん）<br />
-                  「私も、音声入力をやめずに済むので助かります。」（Bさん）
+                  「1行ずつ『削除』を押しました。12行あったときは12回押して、途中で嫌になりました。」（Bさん）<br />
+                  「まだ買っていない卵がチェック済みの行の間に埋もれていて、見落として買い忘れました。」（Aさん）
                 </td>
                 <td>PRD へ</td>
               </tr>
@@ -267,7 +267,7 @@
       <section class="screen" id="screen-prd" role="tabpanel" aria-labelledby="tab-prd" hidden>
         <div class="columns columns--wide-left">
           <section class="card">
-            <h2>PRD：同じ名前の品を足しても、行が増えない</h2>
+            <h2>PRD：買った品をまとめて消す</h2>
             <p class="status">
               <a
                 href="https://github.com/rojoudotcom/family-shopping-list-demo/issues/8"
@@ -287,38 +287,43 @@
 
               <h3>なぜ作るのか</h3>
               <p>
-                同じ品が2行になり、片方にだけチェックが付く。残った行を見て、同じ物を2回買ってしまう。
-                問い合わせ5件のうち3件がこの困りごと。2行になる原因は入力の揺れで、「Milk」と「milk」、音声入力で末尾に空白が付いた「牛乳
-                」と「牛乳」が別の行になる。
+                買い物のあと、チェックを付けた行がリストに残り続ける。消すには行ごとに「削除」を押すしかなく、手間なので消されない。
+                残った行の間に、まだ買っていない品が埋もれて、買い忘れが起きる。問い合わせ5件のうち3件がこの困りごと。
               </p>
 
               <h3>誰のためか</h3>
               <p>
-                Aさん（夫）として、英字のまま品名を打っても、同じ品が2行にならないようにしたい。それは、2回買うのを防ぐためだ。<br />
-                Bさん（妻）として、音声入力で品を足しても、同じ品が2行にならないようにしたい。それは、音声入力をやめずに済むためだ。
+                Bさん（妻）として、買い物から帰ったら、チェックを付けた行をまとめて消したい。それは、1行ずつ「削除」を押す手間をなくすためだ。<br />
+                Aさん（夫）として、まだ買っていない品だけを見て買い物をしたい。それは、チェック済みの行に埋もれた品を見落とさないためだ。
               </p>
 
               <h3>何を作るのか</h3>
               <ul>
                 <li>
-                  同じ名前の品を足しても、行が増えない（大文字・小文字と前後の空白の違いは同じ品として扱う）。
+                  「買った品を消す」ボタンを1つ置く。押すと、チェックを付けた行がまとめて消える。
                 </li>
               </ul>
               <p class="subhead">やらないこと</p>
               <ul>
-                <li>家族の端末どうしの共有</li>
-                <li>チェック済みの品を足したときに、まだ買っていない状態に戻す動き</li>
+                <li>消す前に確かめる画面と、元に戻す操作</li>
+                <li>チェックを付けた行を自動で消す（Aさんは見返してから消したい）</li>
                 <li>買った品を末尾へ移す</li>
+                <li>家族の端末どうしの共有</li>
               </ul>
 
               <h3>受け入れ条件</h3>
               <ul class="ac-list">
-                <li><span class="ac-id">AC-01</span>同じ名前を足すと行が増えない</li>
                 <li>
-                  <span class="ac-id">AC-02</span
-                  >「Milk」と「milk」、前後の空白だけが違う名前も同じ品になる
+                  <span class="ac-id">AC-01</span
+                  >チェックを付けた行が2つあるとき、「買った品を消す」を押すと、その2行が消える
                 </li>
-                <li><span class="ac-id">AC-03</span>違う名前は別の行になる</li>
+                <li>
+                  <span class="ac-id">AC-02</span>まだ買っていない品の行は、消えずに同じ順で残る
+                </li>
+                <li>
+                  <span class="ac-id">AC-03</span
+                  >チェックを付けた行が1つもないとき、押してもリストは変わらない
+                </li>
               </ul>
 
               <h3>決まっていないこと</h3>
@@ -358,11 +363,11 @@
             <tbody>
               <tr>
                 <td><span class="ac-id">AC-01</span></td>
-                <td>「牛乳」がある</td>
-                <td>「牛乳」を足す</td>
-                <td>行は1つのまま</td>
+                <td>「牛乳」「卵」「パン」があり、「卵」と「パン」にチェック</td>
+                <td>「買った品を消す」を押す</td>
+                <td>「卵」と「パン」が消える</td>
                 <td>
-                  <span class="pass">✓</span> AC-01 addItem: 同じ名前の品を足しても、行は増えない
+                  <span class="pass">✓</span> AC-01 clearBought: チェックを付けた行がまとめて消える
                 </td>
                 <td>
                   <button type="button" class="button button--small" data-ac="AC-01">
@@ -373,12 +378,11 @@
               </tr>
               <tr>
                 <td><span class="ac-id">AC-02</span></td>
-                <td>「milk」がある</td>
-                <td>「Milk」や「 milk 」を足す</td>
-                <td>行は1つのまま</td>
+                <td>「牛乳」「卵」「パン」「りんご」があり、「卵」にだけチェック</td>
+                <td>「買った品を消す」を押す</td>
+                <td>「牛乳」「パン」「りんご」が、この順で残る</td>
                 <td>
-                  <span class="pass">✓</span> AC-02 addItem:
-                  大文字・小文字と前後の空白の違いは同じ品として扱う
+                  <span class="pass">✓</span> AC-02 clearBought: まだ買っていない品は同じ順で残る
                 </td>
                 <td>
                   <button type="button" class="button button--small" data-ac="AC-02">
@@ -389,10 +393,12 @@
               </tr>
               <tr>
                 <td><span class="ac-id">AC-03</span></td>
-                <td>「牛乳」がある</td>
-                <td>「卵」を足す</td>
-                <td>行が2つになる</td>
-                <td><span class="pass">✓</span> AC-03 addItem: 違う名前の品を足すと、行が増える</td>
+                <td>「牛乳」「卵」があり、チェックは無い</td>
+                <td>「買った品を消す」を押す</td>
+                <td>リストは変わらない</td>
+                <td>
+                  <span class="pass">✓</span> AC-03 clearBought: チェックが1つもなければ変わらない
+                </td>
                 <td>
                   <button type="button" class="button button--small" data-ac="AC-03">
                     この条件で試す
@@ -408,28 +414,18 @@
           <section class="card">
             <h2>画面で確かめる</h2>
             <p class="muted">
-              ここだけは本物です。アプリと同じ addItem（src/listStore.js）で行を足します。<br />
-              マージ前は main の動き、マージ後は新しい動きになります。
+              ここだけは本物です。アプリと同じ src/listStore.js
+              で、チェックを付けた行を消します。<br />
+              マージ前は main の動き（行は消えない）、マージ後は新しい動きになります。
             </p>
             <p class="engine" id="engine-state"></p>
 
-            <form class="try-form" id="try-form" novalidate>
-              <input
-                id="try-input"
-                class="try-form__input"
-                type="text"
-                autocomplete="off"
-                placeholder="品名を入力（例: Milk）"
-                aria-label="足す品名"
-              />
-              <button type="submit" class="button">追加</button>
-              <button type="button" class="button button--ghost" id="try-reset">空にする</button>
-            </form>
-            <p class="try-error" id="try-error" role="alert"></p>
-
             <p class="try-goal" id="try-goal"></p>
-            <p class="try-count" id="try-count" aria-live="polite"></p>
             <ul class="try-list" id="try-list" aria-label="試しているリスト"></ul>
+            <div class="actions">
+              <button type="button" class="button" id="try-clear">買った品を消す</button>
+            </div>
+            <p class="try-count" id="try-count" aria-live="polite"></p>
           </section>
 
           <section class="card">
