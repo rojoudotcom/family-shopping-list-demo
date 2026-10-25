@@ -28,6 +28,29 @@ test('addItem: 品名の前後の空白を取り除く', () => {
   assert.equal(result[0].name, 'たまご');
 });
 
+test('AC-01 addItem: 同じ名前の品を足しても、行は増えない', () => {
+  const items = addItem([], '牛乳');
+  const result = addItem(items, '牛乳');
+  assert.equal(result.length, 1);
+  assert.equal(result, items);
+});
+
+test('AC-02 addItem: 大文字・小文字と前後の空白の違いは同じ品として扱う', () => {
+  const items = addItem([], 'milk');
+  const capitalized = addItem(items, 'Milk');
+  const padded = addItem(items, ' milk ');
+  assert.equal(capitalized.length, 1);
+  assert.equal(padded.length, 1);
+  assert.equal(capitalized[0].name, 'milk');
+  assert.equal(padded[0].name, 'milk');
+});
+
+test('AC-03 addItem: 違う名前の品を足すと、行が増える', () => {
+  const result = addItem(addItem([], '牛乳'), '卵');
+  assert.equal(result.length, 2);
+  assert.equal(result[1].name, '卵');
+});
+
 test('addItem: 空文字・空白だけの品名は日本語のメッセージで拒否する', () => {
   assert.throws(() => addItem([], ''), { message: '品名を入力してください' });
   assert.throws(() => addItem([], '   '), { message: '品名を入力してください' });
