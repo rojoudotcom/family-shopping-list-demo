@@ -141,6 +141,21 @@ body {
   color: var(--text);
 }
 
+.remove-bought {
+  margin-bottom: 0.75rem;
+  padding: 0.3rem 0.65rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.remove-bought:hover {
+  color: var(--text);
+}
+
 .item-list {
   list-style: none;
   margin: 0;
