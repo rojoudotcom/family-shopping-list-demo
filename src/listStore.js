@@ -50,15 +50,6 @@ export function deleteItem(items, id) {
 }
 
 /**
- * 「買った」にチェックを付けた品物をすべて削除する。残る品物の順序は変えない。
- * @param {Array} items
- * @returns {Array}
- */
-export function clearBought(items) {
-  return items.filter((item) => !item.bought);
-}
-
-/**
  * 絞り込み条件に一致する品物だけを返す。
  * @param {Array} items
  * @param {string} filter FILTERS のいずれか
