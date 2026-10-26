@@ -11,7 +11,7 @@
     <!--
       研修のデモ用のモックアップです。データベースも AI の呼び出しもありません。
       「AI に〜させる」ボタンは、2秒待ってから用意しておいた文書を見せるだけです。
-      本物の動きは「QA の確認」の「画面で確かめる」だけで、../src/listStore.js の addItem を使います。
+      QA の確認は、この画面ではなく、お客さんの画面（マージ前は /pr/）で行います。
     -->
     <div class="sticky-top">
       <header class="site-header">
@@ -20,7 +20,7 @@
         </p>
       </header>
 
-      <!-- デモの作業プロセスと担当者。1・2・5 を押すと画面が切り替わり、いまの工程に色が付く（mock/app.js の showScreen）。3・4・6 は VS Code と GitHub で見せる -->
+      <!-- デモの作業プロセスと担当者。1・2 を押すと画面が切り替わり、いまの工程に色が付く（mock/app.js の showScreen）。5 はマージ前のお客さんの画面（/pr/）を別タブで開く。3・4・6 は VS Code と GitHub で見せる -->
       <nav class="process" aria-label="デモの作業プロセスと担当者">
         <ol>
           <li class="process__step" data-screen="crm">
@@ -65,13 +65,19 @@
               <span class="process__where process__where--out">外部：GitHub ↗</span>
             </span>
           </li>
-          <li class="process__step" data-screen="qa">
-            <a class="process__link" href="#qa">
+          <li class="process__step">
+            <a
+              class="process__link"
+              href="/pr/?sample"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="マージ前のお客さんの画面（いま開いている Copilot の PR）を別のタブで開きます"
+            >
               <span class="process__no">5</span>
               <span class="process__body">
                 <span class="process__role">QA</span>
                 <span class="process__work">受け入れ条件の確認</span>
-                <span class="process__where process__where--here">この画面</span>
+                <span class="process__where process__where--out">別タブ：PR の画面 ↗</span>
               </span></a
             >
           </li>
@@ -378,103 +384,6 @@
               </ul>
             </section>
           </div>
-        </div>
-      </section>
-
-      <!-- ③ QA の確認：QA の画面 -->
-      <section class="screen" id="screen-qa" aria-label="QA の確認" hidden>
-        <section class="card">
-          <h2>受け入れ条件の確認（PRD：Issue #8）</h2>
-          <table class="table table--qa">
-            <thead>
-              <tr>
-                <th>条件</th>
-                <th>前提</th>
-                <th>操作</th>
-                <th>結果</th>
-                <th>テスト（CI の結果・擬似）</th>
-                <th>画面で確かめる</th>
-                <th>確認した</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="ac-id">AC-01</span></td>
-                <td>「牛乳」「卵」「パン」があり、「卵」と「パン」にチェック</td>
-                <td>「買った品を消す」を押す</td>
-                <td>「卵」と「パン」が消える</td>
-                <td>
-                  <span class="pass">✓</span> AC-01 clearBought: チェックを付けた行がまとめて消える
-                </td>
-                <td>
-                  <button type="button" class="button button--small" data-ac="AC-01">
-                    この条件で試す
-                  </button>
-                </td>
-                <td><input type="checkbox" class="qa-check" aria-label="AC-01 を確認した" /></td>
-              </tr>
-              <tr>
-                <td><span class="ac-id">AC-02</span></td>
-                <td>「牛乳」「卵」「パン」「りんご」があり、「卵」にだけチェック</td>
-                <td>「買った品を消す」を押す</td>
-                <td>「牛乳」「パン」「りんご」が、この順で残る</td>
-                <td>
-                  <span class="pass">✓</span> AC-02 clearBought: まだ買っていない品は同じ順で残る
-                </td>
-                <td>
-                  <button type="button" class="button button--small" data-ac="AC-02">
-                    この条件で試す
-                  </button>
-                </td>
-                <td><input type="checkbox" class="qa-check" aria-label="AC-02 を確認した" /></td>
-              </tr>
-              <tr>
-                <td><span class="ac-id">AC-03</span></td>
-                <td>「牛乳」「卵」があり、チェックは無い</td>
-                <td>「買った品を消す」を押す</td>
-                <td>リストは変わらない</td>
-                <td>
-                  <span class="pass">✓</span> AC-03 clearBought: チェックが1つもなければ変わらない
-                </td>
-                <td>
-                  <button type="button" class="button button--small" data-ac="AC-03">
-                    この条件で試す
-                  </button>
-                </td>
-                <td><input type="checkbox" class="qa-check" aria-label="AC-03 を確認した" /></td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-        <div class="columns">
-          <section class="card">
-            <h2>画面で確かめる</h2>
-            <p class="muted">
-              ここだけは本物です。アプリと同じ src/listStore.js
-              で、チェックを付けた行を消します。<br />
-              手元のフォルダは main のままで構いません。
-            </p>
-            <p class="engine" id="engine-state"></p>
-
-            <p class="try-goal" id="try-goal"></p>
-            <ul class="try-list" id="try-list" aria-label="試しているリスト"></ul>
-            <div class="actions">
-              <button type="button" class="button" id="try-clear">買った品を消す</button>
-            </div>
-            <p class="try-count" id="try-count" aria-live="polite"></p>
-          </section>
-
-          <section class="card">
-            <h2>QA のコメント</h2>
-            <p class="muted">PR に貼るコメントです。ボタンでクリップボードに写します。</p>
-            <textarea id="qa-comment" class="comment" rows="3" readonly>
-AC-01〜03 を受け入れ条件どおりに確認しました（QA）</textarea>
-            <div class="actions">
-              <button type="button" class="button" id="qa-copy">QA のコメントを書く</button>
-              <span class="copied" id="qa-copied" aria-live="polite"></span>
-            </div>
-          </section>
         </div>
       </section>
     </main>
