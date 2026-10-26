@@ -9,7 +9,6 @@ import {
   addItem,
   toggleBought,
   deleteItem,
-  clearBought,
   filterItems,
   countToBuy,
   FILTERS,
@@ -35,7 +34,6 @@ const formError = document.querySelector('#form-error');
 const list = document.querySelector('#item-list');
 const counter = document.querySelector('#to-buy-count');
 const emptyState = document.querySelector('#empty-state');
-const clearBoughtButton = document.querySelector('#clear-bought');
 const filterButtons = document.querySelectorAll('[data-filter]');
 
 // 見本のリスト（デモ用）の写しを返す。
@@ -154,9 +152,5 @@ for (const button of filterButtons) {
     render();
   });
 }
-
-clearBoughtButton.addEventListener('click', () => {
-  update(clearBought(items));
-});
 
 render();
