@@ -34,7 +34,7 @@ PRD の読み方と名前：
   - 左に、使う人を丸（`A(("Aさん（夫）"))`）で置く。PRD の「誰のためか」の人と、`docs/customer/利用者プロフィール.md` の家族を入れる
   - 右に、`subgraph SYS["家族の買い物リスト"]` の枠を置き、その中に、使う人がする操作を角の丸い箱（`UC1(["品を足す"])`）で並べる。いまある操作（README と src/ から分かるもの）と、今回足す操作（PRD の「何を作るのか」）の両方を入れる
   - 使う人と操作は、矢印でなく線（`---`）でつなぐ
-  - 今回足す操作は、名前の後ろに「（今回足す）」と書き、`classDef new fill:#fff3c4,stroke:#9a6700,stroke-width:2px` と `class UC番号 new` で色を付ける
+  - 今回足す操作は、名前の後ろに「（今回足す）」と書き、`classDef added fill:#fff3c4,stroke:#9a6700,stroke-width:2px` と `class UC番号 added` で色を付ける（クラス名に `new` は使わない。予約語で図が出ないことがある）
 - アーキテクチャ図：`flowchart LR` で、実在するファイルのつながりを描く（このリポジトリなら index.html → src/app.js → src/listStore.js → localStorage）
 - ERD：`erDiagram` で、保存するものと、そのつながりを描く。エンティティの名前は日本語のまま書く
   - 保存先（`買い物リスト`。`localStorage` のキーを項目に書く）と `品物` の2つを置き、`買い物リスト ||--o{ 品物 : "品を持つ"` でつなぐ
