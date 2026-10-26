@@ -13,7 +13,6 @@ import {
   addItem,
   toggleBought,
   deleteItem,
-  clearBought,
   filterItems,
   countToBuy,
   FILTERS,
@@ -118,29 +117,4 @@ test('toggleBought: 新しい配列と新しい品物を返し、元の品物は
   assert.notEqual(toggled, items);
   assert.notEqual(toggled[0], items[0]);
   assert.equal(items[0].bought, false);
-});
-
-test('AC-01 clearBought: チェックを付けた2行が消える', () => {
-  const items = [
-    { id: 1, name: '牛乳', bought: true },
-    { id: 2, name: 'パン', bought: true },
-  ];
-  assert.deepEqual(clearBought(items), []);
-});
-
-test('AC-02 clearBought: まだ買っていない品は同じ順で残る', () => {
-  const items = [
-    { id: 1, name: '牛乳', bought: false },
-    { id: 2, name: 'パン', bought: true },
-    { id: 3, name: 'たまご', bought: false },
-  ];
-  assert.deepEqual(clearBought(items), [
-    { id: 1, name: '牛乳', bought: false },
-    { id: 3, name: 'たまご', bought: false },
-  ]);
-});
-
-test('AC-03 clearBought: チェックを付けた行が無ければリストは変わらない', () => {
-  const items = [{ id: 1, name: '牛乳', bought: false }];
-  assert.deepEqual(clearBought(items), items);
 });

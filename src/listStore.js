@@ -74,13 +74,3 @@ export function filterItems(items, filter) {
 export function countToBuy(items) {
   return items.filter((item) => !item.bought).length;
 }
-
-/**
- * 買った（bought が true の）品物をまとめて削除する。
- * まだ買っていない品物は、同じ順で残る。
- * @param {Array} items
- * @returns {Array}
- */
-export function clearBought(items) {
-  return items.filter((item) => !item.bought);
-}
