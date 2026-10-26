@@ -140,8 +140,9 @@ test('AC-02 clearBought: まだ買っていない品の行は同じ順で残る'
   ]);
 });
 
+test('AC-03 clearBought: チェックを付けた行がなければ新しい配列で同じ内容を返す', () => {
   const items = Object.freeze([{ id: 1, name: '牛乳', bought: false }]);
   const result = clearBought(items);
   assert.notEqual(result, items);
-  assert.deepEqual(result, items);
+  assert.deepEqual(result, [{ id: 1, name: '牛乳', bought: false }]);
 });
