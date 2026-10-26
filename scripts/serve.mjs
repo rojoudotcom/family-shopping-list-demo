@@ -17,10 +17,57 @@ const MIME_TYPES = {
   '.svg': 'image/svg+xml',
 };
 
+// /pr/ の下は、いま開いている Copilot の PR（ブランチ名が copilot/ で始まるもの）のファイルを
+// GitHub から取ってきて返す。手元を main のままにして、マージ前の画面をローカルで見るため。
+const REPO = 'rojoudotcom/family-shopping-list-demo';
+
+async function findPrBranch() {
+  const response = await fetch(`https://api.github.com/repos/${REPO}/pulls?state=open`);
+  if (!response.ok) {
+    return null;
+  }
+  const pulls = await response.json();
+  const pr = pulls.find((pull) => pull.head.ref.startsWith('copilot/'));
+  return pr ? pr.head.ref : null;
+}
+
+async function servePr(relativePath, res) {
+  const branch = await findPrBranch();
+  if (!branch) {
+    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('開いている Copilot の PR がありません');
+    return;
+  }
+  const rest = relativePath.replace(/^[/\\]*pr[/\\]?/, '');
+  const filePath = rest === '' || rest.endsWith('/') ? `${rest}index.html` : rest;
+  const response = await fetch(`https://raw.githubusercontent.com/${REPO}/${branch}/${filePath}`, {
+    cache: 'no-store',
+  });
+  if (!response.ok) {
+    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('404 Not Found');
+    return;
+  }
+  res.writeHead(200, {
+    'Content-Type': MIME_TYPES[extname(filePath)] || 'application/octet-stream',
+    'Cache-Control': 'no-store',
+  });
+  res.end(Buffer.from(await response.arrayBuffer()));
+}
+
 const server = createServer(async (req, res) => {
   // クエリ文字列を取り除き、ROOT より上の階層への遡り（パストラバーサル）を防ぐ。
   const requestPath = decodeURIComponent((req.url || '/').split('?')[0]);
   const relativePath = normalize(requestPath).replace(/^(\.\.[/\\])+/, '');
+  if (requestPath === '/pr' || requestPath.startsWith('/pr/')) {
+    if (requestPath === '/pr') {
+      res.writeHead(301, { Location: '/pr/' });
+      res.end();
+      return;
+    }
+    await servePr(relativePath, res);
+    return;
+  }
   // 末尾が「/」のパス（/ や /mock/）は、そのフォルダの index.html を返す。
   const filePath = join(
     ROOT,
@@ -51,4 +98,5 @@ const server = createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`${ROOT} を http://localhost:${PORT} で配信しています`);
+  console.log(`Copilot の PR の画面は http://localhost:${PORT}/pr/ で見られます`);
 });
